@@ -54,17 +54,3 @@
 005400     MOVE "A" TO LS1.                                             IC1114.2
 005500 EXIT-IC111.                                                      IC1114.2
 005600     EXIT PROGRAM.                                                IC1114.2
-*END-OF,IC111A                                                                  
-005800 PROCEDURE DIVISION USING LS1 GRP-01.                             IC1104.2
-005900 SECT-IC110-0001 SECTION.                                         IC1104.2
-006000 PARA-IC110.                                                      IC1104.2
-006100     MOVE "IC110A" TO DN2.                                        IC1104.2
-006200     MOVE SPACE TO WS2.                                           IC1104.2
-006300     CALL "IC111A" USING LS1 GRP-01 WS2.                          IC1104.2
-006400     MOVE WS2 TO DN7.                                             IC1104.2
-006500     MOVE LS1 TO DN8.                                             IC1104.2
-006600     ADD 1 TO DN5.                                                IC1104.2
-006700     MOVE "B" TO LS1.                                             IC1104.2
-006800 EXIT-IC110.                                                      IC1104.2
-006900     EXIT PROGRAM.                                                IC1104.2
-*END-OF,IC110A                                                                  

@@ -53,20 +53,3 @@
 005300     DISPLAY "IC118M CALLED".                                     IC1184.2
 005400 IC118-EXIT.                                                      IC1184.2
 005500     EXIT PROGRAM.                                                IC1184.2
-*END-OF,IC118M                                                                  
-005700*                                                                 IC1174.2
-005800 USNG-DISPLAY-02.                                                 IC1174.2
-005900     DISPLAY "  ".                                                IC1174.2
-006000     DISPLAY "IC117M CALLED".                                     IC1174.2
-006100 USNG-TEST-03.                                                    IC1174.2
-006200     CALL "IC118M".                                               IC1174.2
-006300*                                                                 IC1174.2
-006400*    THIS TEST CONTAINS A CALL STATEMENT WITHOUT THE OPTIONAL     IC1174.2
-006500*    USING PHRASE.                                                IC1174.2
-006600*    REFERENCE - X3.23-1995, PAGE X-27, 5.2, THE CALL STATEMENT.  IC1174.2
-006700*                                                                 IC1174.2
-006800 USNG-DISPLAY-03.                                                 IC1174.2
-006900     DISPLAY "RETURNED TO IC117M".                                IC1174.2
-007000 IC117-EXIT.                                                      IC1174.2
-007100     EXIT PROGRAM.                                                IC1174.2
-*END-OF,IC117M                                                                  

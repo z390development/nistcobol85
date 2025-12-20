@@ -76,4 +76,3 @@
 007600     ADD 1 TO RECORDS-IN-ERROR.                                   IC1134.2
 007700     MOVE 1 TO ERROR-FLAG.                                        IC1134.2
 007800     GO TO LINK-EXIT-08.                                          IC1134.2
-*END-OF,IC113A                                                                  

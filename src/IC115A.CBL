@@ -211,4 +211,3 @@
 021100     CLOSE SQ-FS3.                                                IC1154.2
 021200 LINK-CLOSE-EXIT-12.                                              IC1154.2
 021300     EXIT PROGRAM.                                                IC1154.2
-*END-OF,IC115A                                                                  

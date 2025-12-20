@@ -46,4 +46,3 @@
 004600     MOVE DN2 TO DN1.                                             IC1024.2
 004700 CALL-EXIT-001.                                                   IC1024.2
 004800     EXIT PROGRAM.                                                IC1024.2
-*END-OF,IC102A                                                                  

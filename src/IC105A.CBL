@@ -62,11 +62,3 @@
 006200     MOVE 5 TO DN2.                                               IC1054.2
 006300 EXIT-STATEMENT-004.                                              IC1054.2
 006400     EXIT PROGRAM.                                                IC1054.2
-*END-OF,IC105A                                                                  
-006600     MOVE "YES" TO A-FIELD.                                       IC1044.2
-006700     MOVE NUM-CONSTANT TO ELEM-01.                                IC1044.2
-006800     MOVE NUM-DISPLAY TO NUM-ITEM.                                IC1044.2
-006900     MOVE "ABCD" TO EDITED-FIELD.                                 IC1044.2
-007000 CALL-EXIT-06.                                                    IC1044.2
-007100     EXIT PROGRAM.                                                IC1044.2
-*END-OF,IC104A                                                                  
