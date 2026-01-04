@@ -1,0 +1,63 @@
+# Intellij project files
+.idea/
+*.iml
+
+# VSCode workspace settings
+.vscode/
+
+# doc working areas
+docenv/
+site/
+
+# Assembler/emulator output stuff
+**/*.[bB][aA][lL]
+**/*.[dD][fF]?
+**/*.[dD][iI]?
+**/*.[eE][rR][rR]
+**/*.[hH][lL][aA]
+**/*.[iI][mM][gG]
+**/*.[lL][oO][gG]
+**/*.[lL][sS][tT]
+**/*.[mM][lL][cC]
+**/*.[oO][bB][jJ]
+**/*.[oO][uU][tT]
+**/*.[pP][cC][hH]
+**/*.[pP][rR]1
+**/*.[pP][rR][nN]
+**/*.[rR][pP][tT]
+**/*.[sS][fF][0-9]
+**/*.[sS][tT][aA]
+**/*.[sS][vV]*
+**/*.[tT][fF][0-9]
+!**/*.[tT][fF][1-3]
+**/*.[tT][rR]?
+**/*.[tT][sS][tT]
+# *.XPH / *.XPR / *.XPT
+**/*.[xX][pP][hHrRtT]
+**/*_ZC_LABELS.CPY
+**/*.390
+
+# Other output stuff
+**/[aA][lL][lL]/
+**/[cC][lL][aA][sS][sS][eE][sS]/
+**/[dD][iI][fF]/
+**/[dD][iI][fF][fF]/
+**/[sS][aA][vV][eE]/
+**/*.[bB][mM][kK]
+**/*.[hH][tT][mM]
+**/*.[hH][tT][mM][lL]
+**/*.[oO][tT][1-9]
+# *.RLE / *.RLG / *.RUE / *.RUG
+**/*.[rR][lLuU][eEgG]
+**/*.[uU][lL][dD]
+**/*.[uU][rR][fF]
+**/*.[vV][eE][sS]
+# *.VX0 / *.VXN
+**/*.[vV][xX][0nN]
+
+# redirection files
+**/*.[lL][nN][kK]
+
+# Start ignore rules for docs here
+!doc/**
+!doc_overrides/**
