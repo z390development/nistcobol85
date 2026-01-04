@@ -56,4 +56,3 @@
 005600     MOVE WS2 TO DN4.                                             IC2024.2
 005700 CALL-EXIT-001.                                                   IC2024.2
 005800     EXIT PROGRAM.                                                IC2024.2
-*END-OF,IC202A                                                                  

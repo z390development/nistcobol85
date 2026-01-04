@@ -101,4 +101,3 @@
 010100     MOVE 9 TO DN3.                                               IC2084.2
 010200 EXIT-IC208.                                                      IC2084.2
 010300     EXIT PROGRAM.                                                IC2084.2
-*END-OF,IC208A                                                                  
