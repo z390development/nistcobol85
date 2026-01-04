@@ -54,18 +54,3 @@
 005400     MOVE WS1 TO DN1.                                             IC2064.2
 005500 EXIT-IC206.                                                      IC2064.2
 005600     EXIT PROGRAM.                                                IC2064.2
-*END-OF,IC206A                                                                  
-005800     IF DN2 EQUAL TO 3                                            IC2054.2
-005900         MOVE "A" TO TV-1.                                        IC2054.2
-006000     CANCEL "IC206A".                                             IC2054.2
-006100     MOVE ZERO TO DN2.                                            IC2054.2
-006200     CALL "IC206A" USING DN2.                                     IC2054.2
-006300     IF DN2 NOT EQUAL TO 1                                        IC2054.2
-006400         MOVE "Y" TO TV-2,                                        IC2054.2
-006500         GO TO CNCL-TEST-06.                                      IC2054.2
-006600     MOVE "B" TO TV-2.                                            IC2054.2
-006700 CNCL-TEST-06.                                                    IC2054.2
-006800     CANCEL ID1.                                                  IC2054.2
-006900 EXIT-IC205.                                                      IC2054.2
-007000     EXIT PROGRAM.                                                IC2054.2
-*END-OF,IC205A                                                                  

@@ -38,4 +38,3 @@
 003800     MOVE "Y" TO TEST3.                                           IC2124.2
 003900 IC212-EXIT.                                                      IC2124.2
 004000     EXIT PROGRAM.                                                IC2124.2
-*END-OF,IC212A                                                                  

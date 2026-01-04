@@ -38,4 +38,3 @@
 003800     MOVE 1 TO DN3.                                               IC2154.2
 003900 IC215-EXIT.                                                      IC2154.2
 004000     EXIT PROGRAM.                                                IC2154.2
-*END-OF,IC215A                                                                  

@@ -46,4 +46,3 @@
 004600     MOVE "NO" TO DN9.                                            IC2174.2
 004700 IC217-EXIT.                                                      IC2174.2
 004800     EXIT PROGRAM.                                                IC2174.2
-*END-OF,IC217A                                                                  
