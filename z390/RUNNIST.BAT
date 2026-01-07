@@ -1,4 +1,3 @@
-
 @if /I "%1" == "tron" (echo on) else (echo off)
 rem run z390 zcobol sample regression tests
 
@@ -39,26 +38,21 @@ if %1. == . goto help
 
 set parmrc=0
 :parmloop
-if /I %1. EQU   .  goto parmdone
-if /I %1. EQU CM. (set test_CM=Y
-                   goto parmnotall)
-if /I %1. EQU DB. (set test_DB=Y
-                   goto parmnotall)
-if /I %1. EQU EX. (set test_EX=Y
-                   goto parmnotall)
-if /I %1. EQU IC. (set test_IC=Y
-                   goto parmnotall)
-if /I %1. EQU IF. (set test_IF=Y
-                   goto parmnotall)
-if /I %1. EQU IX. (set test_IX=Y
-                   goto parmnotall)
-if /I %1. EQU NC. (set test_NC=Y
-                   goto parmnotall)
-if /I %1. EQU cleanup. (set cleanup=Y
-                        goto parmnotall)
+if /I %1. EQU   .       goto parmdone
+if /I %1. EQU ALT.     (set test_ALT=Y&&goto parmnotall)
+if /I %1. EQU CM.      (set test_CM=Y&&goto parmnotall)
+if /I %1. EQU DB.      (set test_DB=Y&&goto parmnotall)
+if /I %1. EQU EX.      (set test_EX=Y&&goto parmnotall)
+if /I %1. EQU IC.      (set test_IC=Y&&goto parmnotall)
+if /I %1. EQU IF.      (set test_IF=Y&&goto parmnotall)
+if /I %1. EQU IX.      (set test_IX=Y&&goto parmnotall)
+if /I %1. EQU K.       (set test_K=Y&&goto parmnotall)
+if /I %1. EQU NC.      (set test_NC=Y&&goto parmnotall)
+if /I %1. EQU OB.      (set test_OB=Y&&goto parmnotall)
+if /I %1. EQU RL.      (set test_RL=Y&&goto parmnotall)
+if /I %1. EQU cleanup. (set cleanup=Y&&goto parmnotall)
 rem -- should be the path to z390
-if exist %1\bat\CBLCLG.BAT (set z390dir=%1
-                            goto parmnext)
+if exist %1\bat\CBLCLG.BAT (set z390dir=%1&&goto parmnext)
 echo %0 Unknown parameter: %1
 set parmrc=8
 :parmnotall
@@ -80,346 +74,470 @@ rem --
 rem -- clear leftovers from prior runs
 :cleanup
 echo Cleaning up...
-if exist %nistdir%\src\*.390                del %nistdir%\src\*.390
-if exist %nistdir%\src\*.BAL                del %nistdir%\src\*.BAL
-if exist %nistdir%\src\*.ERR                del %nistdir%\src\*.ERR
-if exist %nistdir%\src\*.LOG                del %nistdir%\src\*.LOG
-if exist %nistdir%\src\*.LST                del %nistdir%\src\*.LST
-if exist %nistdir%\src\*.MLC                del %nistdir%\src\*.MLC
-if exist %nistdir%\src\*.OBJ                del %nistdir%\src\*.OBJ
-if exist %nistdir%\src\*.OUT                del %nistdir%\src\*.OUT
-if exist %nistdir%\src\*.PRN                del %nistdir%\src\*.PRN
-if exist %nistdir%\src\*.CBL_ZC_LABELS.CPY  del %nistdir%\src\*.CBL_ZC_LABELS.CPY
-if exist %nistdir%\z390\*.390               del %nistdir%\z390\*.390
-if exist %nistdir%\z390\*.BAL               del %nistdir%\z390\*.BAL
-if exist %nistdir%\z390\*.ERR               del %nistdir%\z390\*.ERR
-if exist %nistdir%\z390\*.LOG               del %nistdir%\z390\*.LOG
-if exist %nistdir%\z390\*.LST               del %nistdir%\z390\*.LST
-if exist %nistdir%\z390\*.MLC               del %nistdir%\z390\*.MLC
-if exist %nistdir%\z390\*.OBJ               del %nistdir%\z390\*.OBJ
-if exist %nistdir%\z390\*.OUT               del %nistdir%\z390\*.OUT
-if exist %nistdir%\z390\*.PRN               del %nistdir%\z390\*.PRN
-if exist %nistdir%\z390\*.CBL_ZC_LABELS.CPY del %nistdir%\z390\*.CBL_ZC_LABELS.CPY
+call :sub_clean %nistdir%\src
+call :sub_clean %nistdir%\z390
 echo Cleanup complete
 if %cleanup%. EQU Y. goto return
 
 rem --
-rem -- Copy members and purpose:
-rem ALTL1.CPY - intended for use by EXEC85
-rem ALTLB.CPY - intended for use by EXEC85
+rem -- initialize result counters
+set /A copymbr  = 0
+set /A datambr  = 0
+set /A nocount  = 0
+set /A tested   = 0
+set /A testgood = 0
+set /A testwarn = 0
+set /A testerr  = 0
+set /A testfail = 0
+
+rem --
+rem -- ALT copy members and purpose:
+if /I %test_all%. EQU N. if /I %test_ALT%. NEQ Y. goto skip_ALT
+call :sub_copy CBL    %nistdir%\src ALTL1 || rem intended for use by EXEC85
+call :sub_copy CBL    %nistdir%\src ALTLB || rem intended for use by EXEC85
+:skip_ALT
 
 rem --
 rem -- CM = Communications Module
 if /I %test_all%. EQU N. if /I %test_CM%. NEQ Y. goto skip_CM
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\CM101M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\CM102M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\CM103M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\CM104M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\CM105M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\CM201M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\CM202M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\CM303M
-call bat\CBLC   %z_TraceMode% %nistdir%\src\CM401M || rem test error mesages
+call :sub_cobol CBLCLG %nistdir%\src CM101M
+call :sub_cobol CBLCLG %nistdir%\src CM102M
+call :sub_cobol CBLCLG %nistdir%\src CM101M
+call :sub_cobol CBLCLG %nistdir%\src CM102M
+call :sub_cobol CBLCLG %nistdir%\src CM103M
+call :sub_cobol CBLCLG %nistdir%\src CM104M
+call :sub_cobol CBLCLG %nistdir%\src CM105M
+call :sub_cobol CBLCLG %nistdir%\src CM201M
+call :sub_cobol CBLCLG %nistdir%\src CM202M
+call :sub_cobol CBLCLG %nistdir%\src CM303M
+call :sub_cobol CBLCLG %nistdir%\src CM401M
 :skip_CM
 
 rem --
 rem -- DB = Debug module
 if /I %test_all%. EQU N. if /I %test_DB%. NEQ Y. goto skip_DB
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB101A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB102A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB103M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB104A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB105A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB201A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB202A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB203A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB204A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\DB205A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\DB301M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\DB302M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\DB303M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\DB304M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\DB305M || rem test error mesages
+call :sub_cobol CBLCLG %nistdir%\src DB101A
+call :sub_cobol CBLCLG %nistdir%\src DB102A
+call :sub_cobol CBLCLG %nistdir%\src DB103M
+call :sub_cobol CBLCLG %nistdir%\src DB104A
+call :sub_cobol CBLCLG %nistdir%\src DB105A
+call :sub_cobol CBLCLG %nistdir%\src DB201A
+call :sub_cobol CBLCLG %nistdir%\src DB202A
+call :sub_cobol CBLCLG %nistdir%\src DB203A
+call :sub_cobol CBLCLG %nistdir%\src DB204A
+call :sub_cobol CBLCLG %nistdir%\src DB205A
+call :sub_cobol CBLCLG %nistdir%\src DB301M
+call :sub_cobol CBLCLG %nistdir%\src DB302M
+call :sub_cobol CBLCLG %nistdir%\src DB303M
+call :sub_cobol CBLCLG %nistdir%\src DB304M
+call :sub_cobol CBLCLG %nistdir%\src DB305M
 :skip_DB
 
 rem --
 rem -- EX = Executive module
 if /I %test_all%. EQU N. if /I %test_EX%. NEQ Y. goto skip_EX
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\EXEC85
+call :sub_cobol CBLCLG %nistdir%\src EXEC85
 :skip_EX
 
 rem --
 rem -- IC = Inter-Program Communication - subprograms must be compiled before each main program!
 if /I %test_all%. EQU N. if /I %test_IC%. NEQ Y. goto skip_IC
-del %nistdir%\src\IC*.OBJ >NUL                     || rem clear out leftovers of prior run
-set XXXXX055=%nistdir%\src\IC101A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC102A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC101A
-set XXXXX055=%nistdir%\src\IC103A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC104A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC105A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC103A
-set XXXXX055=%nistdir%\src\IC106A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC107A
-call bat\CBLCL  %z_TraceMode% %nistdir%\src\IC106A || rem execution ends S0C7
-set XXXXX055=%nistdir%\src\IC108A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC109A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC110A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC111A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC108A
-set XXXXX055=%nistdir%\src\IC112A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC113A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC112A || rem fails to generate the call to IC113A
-set XXXXX055=%nistdir%\src\IC114A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC115A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC114A || rem fails to link because of errors in IC115A
-set XXXXX055=%nistdir%\src\IC116M_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC117M
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC118M
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC116M
-set XXXXX055=%nistdir%\src\IC201A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC202A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC201A
-set XXXXX055=%nistdir%\src\IC203A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC204A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC205A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC206A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC203A
-set XXXXX055=%nistdir%\src\IC207A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC208A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC207A
-set XXXXX055=%nistdir%\src\IC209A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC210A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC211A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC212A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC209A || rem fails to link because of errors in IC209A
-set XXXXX055=%nistdir%\src\IC213A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC214A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC215A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC213A || rem fails to link because of errors in IC215A
-set XXXXX055=%nistdir%\src\IC216A_XXXXX055.OUT
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IC217A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IC216A
-set XXXXX055=
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC222A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC222A1 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC222A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC223A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC223A1 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC223A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC224A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC224A1 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC224A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC225A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC225A1 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC225A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC226A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC226A1 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC226A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC227A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC227A1 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC227A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC228A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC228A1 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC228A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC233A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC233A1 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC233A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC234A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC234A1 || instead of the original
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC234A2 || instead of the original
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC234A3 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC234A  || instead of the original
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC235A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC235A1 || instead of the original
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC235A2 || instead of the original
-call bat\CBLCLG %z_TraceMode% %nistdir%\z390\IC235A  || instead of the original
-set XXXXX055=%nistdir%\src\IC237A_XXXXX055.OUT
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC237A   || rem uses multiple programs in 1 source file
-call bat\CBLC   %z_TraceMode% %nistdir%\z390\IC237A1 || instead of the original
-call bat\CBLCL  %z_TraceMode% %nistdir%\z390\IC237A  || instead of the original - incurs S0C5 at runtime
-set XXXXX055=
-rem  bat\CBLCLG %z_TraceMode% %nistdir%\src\IC401M   || rem uses multiple programs in 1 source file
+call :sub_cobol CBLC   %nistdir%\src IC102A
+call :sub_cobol CBLCLG %nistdir%\src IC101A
+call :sub_cobol CBLC   %nistdir%\src IC104A
+call :sub_cobol CBLC   %nistdir%\src IC105A
+call :sub_cobol CBLCLG %nistdir%\src IC103A
+call :sub_cobol CBLC   %nistdir%\src IC107A
+call :sub_cobol CBLCLG %nistdir%\src IC106A
+call :sub_cobol CBLC   %nistdir%\src IC109A
+call :sub_cobol CBLC   %nistdir%\src IC110A
+call :sub_cobol CBLC   %nistdir%\src IC111A
+call :sub_cobol CBLCLG %nistdir%\src IC108A
+call :sub_cobol CBLC   %nistdir%\src IC113A
+call :sub_cobol CBLCLG %nistdir%\src IC112A || rem fails to generate the call to IC113A
+call :sub_cobol CBLC   %nistdir%\src IC115A
+call :sub_cobol CBLCLG %nistdir%\src IC114A
+call :sub_cobol CBLC   %nistdir%\src IC117M
+call :sub_cobol CBLC   %nistdir%\src IC118M
+call :sub_cobol CBLCLG %nistdir%\src IC116M
+call :sub_cobol CBLC   %nistdir%\src IC202A
+call :sub_cobol CBLCLG %nistdir%\src IC201A
+call :sub_cobol CBLC   %nistdir%\src IC204A
+call :sub_cobol CBLC   %nistdir%\src IC205A
+call :sub_cobol CBLC   %nistdir%\src IC206A
+call :sub_cobol CBLCLG %nistdir%\src IC203A
+call :sub_cobol CBLC   %nistdir%\src IC208A
+call :sub_cobol CBLCLG %nistdir%\src IC207A
+call :sub_cobol CBLC   %nistdir%\src IC210A
+call :sub_cobol CBLC   %nistdir%\src IC211A
+call :sub_cobol CBLC   %nistdir%\src IC212A
+call :sub_cobol CBLCLG %nistdir%\src IC209A
+call :sub_cobol CBLC   %nistdir%\src IC214A
+call :sub_cobol CBLC   %nistdir%\src IC215A
+call :sub_cobol CBLCLG %nistdir%\src IC213A
+call :sub_cobol CBLC   %nistdir%\src IC217A
+call :sub_cobol CBLCLG %nistdir%\src IC216A
+call :sub_cobol CBLCLG %nistdir%\src  IC222A
+call :sub_cobol CBLC   %nistdir%\z390 IC222A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC222A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC223A
+call :sub_cobol CBLC   %nistdir%\z390 IC223A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC223A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC224A
+call :sub_cobol CBLC   %nistdir%\z390 IC224A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC224A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC225A
+call :sub_cobol CBLC   %nistdir%\z390 IC225A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC225A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC226A
+call :sub_cobol CBLC   %nistdir%\z390 IC226A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC226A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC227A
+call :sub_cobol CBLC   %nistdir%\z390 IC227A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC227A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC228A
+call :sub_cobol CBLC   %nistdir%\z390 IC228A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC228A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC233A
+call :sub_cobol CBLC   %nistdir%\z390 IC233A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC233A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC234A
+call :sub_cobol CBLC   %nistdir%\z390 IC234A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLC   %nistdir%\z390 IC234A2 NOCOUNT || rem instead of the original
+call :sub_cobol CBLC   %nistdir%\z390 IC234A3 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC234A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC235A
+call :sub_cobol CBLC   %nistdir%\z390 IC235A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLC   %nistdir%\z390 IC235A2 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC235A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC237A
+call :sub_cobol CBLC   %nistdir%\z390 IC237A1 NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\z390 IC237A  NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  IC401M 
 :skip_IC
 
 rem --
 rem -- IF = Intrinsic Functions
 if /I %test_all%. EQU N. if /I %test_IF%. NEQ Y. goto skip_IF
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF101A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF102A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF103A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF104A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF105A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF106A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF107A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF108A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF109A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF110A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF111A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF112A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF113A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF114A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF115A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF116A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF117A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF118A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF119A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF120A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF121A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF122A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF123A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF124A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF125A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF126A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF127A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF128A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF129A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF130A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF131A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF132A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF133A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF134A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF135A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF136A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF137A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF138A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF139A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF140A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF141A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IF142A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IF401M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IF402M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IF403M || rem test error mesages
+call :sub_cobol CBLCLG %nistdir%\src IF101A
+call :sub_cobol CBLCLG %nistdir%\src IF102A
+call :sub_cobol CBLCLG %nistdir%\src IF103A
+call :sub_cobol CBLCLG %nistdir%\src IF104A
+call :sub_cobol CBLCLG %nistdir%\src IF105A
+call :sub_cobol CBLCLG %nistdir%\src IF106A
+call :sub_cobol CBLCLG %nistdir%\src IF107A
+call :sub_cobol CBLCLG %nistdir%\src IF108A
+call :sub_cobol CBLCLG %nistdir%\src IF109A
+call :sub_cobol CBLCLG %nistdir%\src IF110A
+call :sub_cobol CBLCLG %nistdir%\src IF111A
+call :sub_cobol CBLCLG %nistdir%\src IF112A
+call :sub_cobol CBLCLG %nistdir%\src IF113A
+call :sub_cobol CBLCLG %nistdir%\src IF114A
+call :sub_cobol CBLCLG %nistdir%\src IF115A
+call :sub_cobol CBLCLG %nistdir%\src IF116A
+call :sub_cobol CBLCLG %nistdir%\src IF117A
+call :sub_cobol CBLCLG %nistdir%\src IF118A
+call :sub_cobol CBLCLG %nistdir%\src IF119A
+call :sub_cobol CBLCLG %nistdir%\src IF120A
+call :sub_cobol CBLCLG %nistdir%\src IF121A
+call :sub_cobol CBLCLG %nistdir%\src IF122A
+call :sub_cobol CBLCLG %nistdir%\src IF123A
+call :sub_cobol CBLCLG %nistdir%\src IF124A
+call :sub_cobol CBLCLG %nistdir%\src IF125A
+call :sub_cobol CBLCLG %nistdir%\src IF126A
+call :sub_cobol CBLCLG %nistdir%\src IF127A
+call :sub_cobol CBLCLG %nistdir%\src IF128A
+call :sub_cobol CBLCLG %nistdir%\src IF129A
+call :sub_cobol CBLCLG %nistdir%\src IF130A
+call :sub_cobol CBLCLG %nistdir%\src IF131A
+call :sub_cobol CBLCLG %nistdir%\src IF132A
+call :sub_cobol CBLCLG %nistdir%\src IF133A
+call :sub_cobol CBLCLG %nistdir%\src IF134A
+call :sub_cobol CBLCLG %nistdir%\src IF135A
+call :sub_cobol CBLCLG %nistdir%\src IF136A
+call :sub_cobol CBLCLG %nistdir%\src IF137A
+call :sub_cobol CBLCLG %nistdir%\src IF138A
+call :sub_cobol CBLCLG %nistdir%\src IF139A
+call :sub_cobol CBLCLG %nistdir%\src IF140A
+call :sub_cobol CBLCLG %nistdir%\src IF141A
+call :sub_cobol CBLCLG %nistdir%\src IF142A
+call :sub_cobol CBLCLG %nistdir%\src IF401M
+call :sub_cobol CBLCLG %nistdir%\src IF402M
+call :sub_cobol CBLCLG %nistdir%\src IF403M
 :skip_IF
 
 rem --
 rem -- IX = Indexed I/O
 if /I %test_all%. EQU N. if /I %test_IX%. NEQ Y. goto skip_IX
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX101A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX102A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX103A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX104A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX105A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX106A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX107A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX108A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX109A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX110A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX111A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX112A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX113A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX114A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX115A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX116A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX117A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX118A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX119A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX120A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX121A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX201A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX202A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX203A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX204A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX205A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX206A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX207A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX208A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX209A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX210A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX211A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX212A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX213A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX214A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX215A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX216A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX217A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\IX218A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IX301M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IX302M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\IX401M || rem test error mesages
+call :sub_cobol CBLCLG %nistdir%\src IX101A
+call :sub_cobol CBLCLG %nistdir%\src IX102A
+call :sub_cobol CBLCLG %nistdir%\src IX103A
+call :sub_cobol CBLCLG %nistdir%\src IX104A
+call :sub_cobol CBLCLG %nistdir%\src IX105A
+call :sub_cobol CBLCLG %nistdir%\src IX106A
+call :sub_cobol CBLCLG %nistdir%\src IX107A
+call :sub_cobol CBLCLG %nistdir%\src IX108A
+call :sub_cobol CBLCLG %nistdir%\src IX109A
+call :sub_cobol CBLCLG %nistdir%\src IX110A
+call :sub_cobol CBLCLG %nistdir%\src IX111A
+call :sub_cobol CBLCLG %nistdir%\src IX112A
+call :sub_cobol CBLCLG %nistdir%\src IX113A
+call :sub_cobol CBLCLG %nistdir%\src IX114A
+call :sub_cobol CBLCLG %nistdir%\src IX115A
+call :sub_cobol CBLCLG %nistdir%\src IX116A
+call :sub_cobol CBLCLG %nistdir%\src IX117A
+call :sub_cobol CBLCLG %nistdir%\src IX118A
+call :sub_cobol CBLCLG %nistdir%\src IX119A
+call :sub_cobol CBLCLG %nistdir%\src IX120A
+call :sub_cobol CBLCLG %nistdir%\src IX121A
+call :sub_cobol CBLCLG %nistdir%\src IX201A
+call :sub_cobol CBLCLG %nistdir%\src IX202A
+call :sub_cobol CBLCLG %nistdir%\src IX203A
+call :sub_cobol CBLCLG %nistdir%\src IX204A
+call :sub_cobol CBLCLG %nistdir%\src IX205A
+call :sub_cobol CBLCLG %nistdir%\src IX206A
+call :sub_cobol CBLCLG %nistdir%\src IX207A
+call :sub_cobol CBLCLG %nistdir%\src IX208A
+call :sub_cobol CBLCLG %nistdir%\src IX209A
+call :sub_cobol CBLCLG %nistdir%\src IX210A
+call :sub_cobol CBLCLG %nistdir%\src IX211A
+call :sub_cobol CBLCLG %nistdir%\src IX212A
+call :sub_cobol CBLCLG %nistdir%\src IX213A
+call :sub_cobol CBLCLG %nistdir%\src IX214A
+call :sub_cobol CBLCLG %nistdir%\src IX215A
+call :sub_cobol CBLCLG %nistdir%\src IX216A
+call :sub_cobol CBLCLG %nistdir%\src IX217A
+call :sub_cobol CBLCLG %nistdir%\src IX218A
+call :sub_cobol CBLCLG %nistdir%\src IX301M
+call :sub_cobol CBLCLG %nistdir%\src IX302M
+call :sub_cobol CBLCLG %nistdir%\src IX401M
 :skip_IX
 
+
 rem --
-rem -- Copy members and purpose:
-rem K101A.CPY intended usage unknown
-rem K1DAA.CPY intended usage unknown
-rem K1FDA.CPY intended usage unknown
-rem K1P01.CPY intended usage unknown
-rem K1PRA.CPY intended usage unknown
-rem K1PRB.CPY intended usage unknown
-rem K1PRC.CPY intended usage unknown
-rem K1SEA.CPY intended usage unknown
-rem K1W01.CPY intended usage unknown
-rem K1W02.CPY intended usage unknown
-rem K1W03.CPY intended usage unknown
-rem K1W04.CPY intended usage unknown
-rem K1WKA.CPY intended usage unknown
-rem K1WKB.CPY intended usage unknown
-rem K1WKC.CPY intended usage unknown
-rem K1WKY.CPY intended usage unknown
-rem K1WKZ.CPY intended usage unknown
-rem K2PRA.CPY intended usage unknown
-rem K2SEA.CPY intended usage unknown
-rem K3FCA.CPY intended usage unknown
-rem K3FCB.CPY intended usage unknown
-rem K3IOA.CPY intended usage unknown
-rem K3IOB.CPY intended usage unknown
-rem K3LGE.CPY intended usage unknown
-rem K3OCA.CPY intended usage unknown
-rem K3SCA.CPY intended usage unknown
-rem K3SML.CPY intended usage unknown
-rem K3SNA.CPY intended usage unknown
-rem K3SNB.CPY intended usage unknown
-rem K4NTA.CPY intended usage unknown
-rem K501A.CPY intended usage unknown
-rem K501B.CPY intended usage unknown
-rem K5SDA.CPY intended usage unknown
-rem K5SDB.CPY intended usage unknown
-rem K6SCA.CPY intended usage unknown
-rem K7SEA.CPY intended usage unknown
-rem KK208A.CPY intended usage unknown
-rem KP001.CPY intended usage unknown
-rem KP002.CPY intended usage unknown
-rem KP003.CPY intended usage unknown
-rem KP004.CPY intended usage unknown
-rem KP005.CPY intended usage unknown
-rem KP006.CPY intended usage unknown
-rem KP007.CPY intended usage unknown
-rem KP008.CPY intended usage unknown
-rem KP009.CPY intended usage unknown
-rem KP010.CPY intended usage unknown
-rem KSM31.CPY intended usage unknown
-rem KSM41.CPY intended usage unknown
+rem -- K* copy members
+if /I %test_all%. EQU N. if /I %test_K%. NEQ Y. goto skip_K
+call :sub_copy CBL    %nistdir%\src K101A  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1DAA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1FDA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1P01  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1PRA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1PRB  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1PRC  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1SEA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1W01  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1W02  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1W03  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1W04  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1WKA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1WKB  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1WKC  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1WKY  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K1WKZ  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K2PRA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K2SEA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3FCA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3FCB  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3IOA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3IOB  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3LGE  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3OCA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3SCA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3SML  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3SNA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K3SNB  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K4NTA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K501A  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K501B  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K5SDA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K5SDB  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K6SCA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K7SEA  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KK208A || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP001  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP002  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP003  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP004  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP005  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP006  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP007  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP008  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP009  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KP010  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KSM31  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src KSM41  || rem intended usage unknown
+:skip_K
 
 rem --
 rem -- NC = Nucleus
 if /I %test_all%. EQU N. if /I %test_NC%. NEQ Y. goto skip_NC
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC101A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC102A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC103A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC104A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC105A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC106A
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC107A
-call bat\CBLC   %z_TraceMode% %nistdir%\src\NC108M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\NC109M || rem test error mesages
-call bat\CBLC   %z_TraceMode% %nistdir%\src\NC110M || rem test error mesages
-set XXXXX055=%nistdir%\src\NC111A_XXXXX055.OUT
-call bat\CBLCL  %z_TraceMode% %nistdir%\src\NC111A || rem Abend S0CA
-set XXXXX055=
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC112A
-set XXXXX055=%nistdir%\src\NC113M_XXXXX055.OUT
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC113M
-set XXXXX055=
-call bat\CBLCLG %z_TraceMode% %nistdir%\src\NC114M
+call :sub_cobol CBLCLG %nistdir%\src NC101A
+call :sub_cobol CBLCLG %nistdir%\src NC102A
+call :sub_cobol CBLCLG %nistdir%\src NC103A
+call :sub_cobol CBLCLG %nistdir%\src NC104A
+call :sub_cobol CBLCLG %nistdir%\src NC105A
+call :sub_cobol CBLCLG %nistdir%\src NC106A
+call :sub_cobol CBLCLG %nistdir%\src NC107A
+call :sub_cobol CBLCLG %nistdir%\src NC108M
+call :sub_data  CBL    %nistdir%\src NC109M || rem intended usage unknown
+call :sub_cobol CBLCLG %nistdir%\src NC109M
+call :sub_cobol CBLCLG %nistdir%\src NC110M
+call :sub_cobol CBLCLG %nistdir%\src NC111A
+call :sub_cobol CBLCLG %nistdir%\src NC112A
+call :sub_cobol CBLCLG %nistdir%\src NC113M
+call :sub_cobol CBLCLG %nistdir%\src NC114M
+call :sub_cobol CBLCLG %nistdir%\src NC115A
+call :sub_cobol CBLCLG %nistdir%\src NC116A
+call :sub_cobol CBLCLG %nistdir%\src NC117A
+call :sub_cobol CBLCLG %nistdir%\src NC118A
+call :sub_cobol CBLCLG %nistdir%\src NC119A
+call :sub_cobol CBLCLG %nistdir%\src NC120A
+call :sub_cobol CBLCLG %nistdir%\src NC121M
+call :sub_cobol CBLCLG %nistdir%\src NC122A
+call :sub_cobol CBLCLG %nistdir%\src NC123A
+call :sub_cobol CBLCLG %nistdir%\src NC124A
+call :sub_cobol CBLCLG %nistdir%\src NC125A
+call :sub_cobol CBLCLG %nistdir%\src NC126A
+call :sub_cobol CBLCLG %nistdir%\src NC127A
+call :sub_cobol CBLCLG %nistdir%\src NC131A
+call :sub_cobol CBLCLG %nistdir%\src NC132A
+call :sub_cobol CBLCLG %nistdir%\src NC133A
+call :sub_cobol CBLCLG %nistdir%\src NC134A
+call :sub_cobol CBLCLG %nistdir%\src NC135A
+call :sub_cobol CBLCLG %nistdir%\src NC136A
+call :sub_cobol CBLCLG %nistdir%\src NC137A
+call :sub_cobol CBLCLG %nistdir%\src NC138A
+call :sub_cobol CBLCLG %nistdir%\src NC139A
+call :sub_cobol CBLCLG %nistdir%\src NC140A
+call :sub_cobol CBLCLG %nistdir%\src NC141A
+call :sub_cobol CBLCLG %nistdir%\src NC170A
+call :sub_cobol CBLCLG %nistdir%\src NC171A
+call :sub_cobol CBLCLG %nistdir%\src NC172A
+call :sub_cobol CBLCLG %nistdir%\src NC173A
+call :sub_cobol CBLCLG %nistdir%\src NC174A
+call :sub_cobol CBLCLG %nistdir%\src NC175A
+call :sub_cobol CBLCLG %nistdir%\src NC176A
+call :sub_cobol CBLCLG %nistdir%\src NC177A
+call :sub_cobol CBLCLG %nistdir%\src NC201A
+call :sub_cobol CBLCLG %nistdir%\src NC202A
+call :sub_cobol CBLCLG %nistdir%\src NC203A
+call :sub_cobol CBLCLG %nistdir%\src NC204M
+call :sub_data  CBL    %nistdir%\src NC204M || rem intended usage unknown
+call :sub_cobol CBLCLG %nistdir%\src NC205A
+call :sub_cobol CBLCLG %nistdir%\src NC206A
+call :sub_cobol CBLCLG %nistdir%\src NC207A
+call :sub_cobol CBLCLG %nistdir%\src NC208A
+call :sub_cobol CBLCLG %nistdir%\src NC209A
+call :sub_cobol CBLCLG %nistdir%\src NC210A
+call :sub_cobol CBLCLG %nistdir%\src NC211A
+call :sub_cobol CBLCLG %nistdir%\src NC214M
+call :sub_cobol CBLCLG %nistdir%\src NC215A
+call :sub_cobol CBLCLG %nistdir%\src NC216A
+call :sub_cobol CBLCLG %nistdir%\src NC217A
+call :sub_cobol CBLCLG %nistdir%\src NC218A
+call :sub_cobol CBLCLG %nistdir%\src NC219A
+call :sub_cobol CBLCLG %nistdir%\src NC220M
+call :sub_cobol CBLCLG %nistdir%\src NC221A
+call :sub_cobol CBLCLG %nistdir%\src NC222A
+call :sub_cobol CBLCLG %nistdir%\src NC223A
+call :sub_cobol CBLCLG %nistdir%\src NC224A
+call :sub_cobol CBLCLG %nistdir%\src NC225A
+call :sub_cobol CBLCLG %nistdir%\src NC231A
+call :sub_cobol CBLCLG %nistdir%\src NC232A
+call :sub_cobol CBLCLG %nistdir%\src NC233A
+call :sub_cobol CBLCLG %nistdir%\src NC234A
+call :sub_cobol CBLCLG %nistdir%\src NC235A
+call :sub_cobol CBLCLG %nistdir%\src NC236A
+call :sub_cobol CBLCLG %nistdir%\src NC237A
+call :sub_cobol CBLCLG %nistdir%\src NC238A
+call :sub_cobol CBLCLG %nistdir%\src NC239A
+call :sub_cobol CBLCLG %nistdir%\src NC240A
+call :sub_cobol CBLCLG %nistdir%\src NC241A
+call :sub_cobol CBLCLG %nistdir%\src NC242A
+call :sub_cobol CBLCLG %nistdir%\src NC243A
+call :sub_cobol CBLCLG %nistdir%\src NC244A
+call :sub_cobol CBLCLG %nistdir%\src NC245A
+call :sub_cobol CBLCLG %nistdir%\src NC246A
+call :sub_cobol CBLCLG %nistdir%\src NC247A
+call :sub_cobol CBLCLG %nistdir%\src NC248A
+call :sub_cobol CBLCLG %nistdir%\src NC250A
+call :sub_cobol CBLCLG %nistdir%\src NC251A
+call :sub_cobol CBLCLG %nistdir%\src NC252A
+call :sub_cobol CBLCLG %nistdir%\src NC253A
+call :sub_cobol CBLCLG %nistdir%\src NC254A
+call :sub_cobol CBLCLG %nistdir%\src NC302M
+call :sub_cobol CBLCLG %nistdir%\src NC303M
+call :sub_cobol CBLCLG %nistdir%\src NC401M
 :skip_NC
 
 rem --
+rem -- OB = Obsolete
+if /I %test_all%. EQU N. if /I %test_OB%. NEQ Y. goto skip_OB
+call :sub_cobol CBLC   %nistdir%\src OBIC2A
+call :sub_cobol CBLC   %nistdir%\src OBIC3A
+call :sub_cobol CBLCLG %nistdir%\src OBIC1A
+call :sub_cobol CBLCLG %nistdir%\src OBNC1M
+call :sub_cobol CBLCLG %nistdir%\src OBNC2M
+call :sub_cobol CBLCLG %nistdir%\src OBSQ1A
+call :sub_cobol CBLCLG %nistdir%\src OBSQ3A
+call :sub_cobol CBLCLG %nistdir%\src OBSQ4A
+call :sub_cobol CBLCLG %nistdir%\src OBSQ5A
+:skip_OB
+
+rem --
+rem -- RL = Relative I/O
+if /I %test_all%. EQU N. if /I %test_RL%. NEQ Y. goto skip_RL
+call :sub_cobol CBLCLG %nistdir%\src RL101A
+call :sub_cobol CBLCLG %nistdir%\src RL102A
+call :sub_cobol CBLCLG %nistdir%\src RL103A
+call :sub_cobol CBLCLG %nistdir%\src RL104A
+call :sub_cobol CBLCLG %nistdir%\src RL105A
+call :sub_cobol CBLCLG %nistdir%\src RL106A
+call :sub_cobol CBLCLG %nistdir%\src RL107A
+call :sub_cobol CBLCLG %nistdir%\src RL108A
+call :sub_cobol CBLCLG %nistdir%\src RL109A
+call :sub_cobol CBLCLG %nistdir%\src RL110A
+call :sub_cobol CBLCLG %nistdir%\src RL111A
+call :sub_cobol CBLCLG %nistdir%\src RL112A
+call :sub_cobol CBLCLG %nistdir%\src RL113A
+call :sub_cobol CBLCLG %nistdir%\src RL114A
+call :sub_cobol CBLCLG %nistdir%\src RL115A
+call :sub_cobol CBLCLG %nistdir%\src RL116A
+call :sub_cobol CBLCLG %nistdir%\src RL117A
+call :sub_cobol CBLCLG %nistdir%\src RL118A
+call :sub_cobol CBLCLG %nistdir%\src RL119A
+call :sub_cobol CBLCLG %nistdir%\src RL201A
+call :sub_cobol CBLCLG %nistdir%\src RL202A
+call :sub_cobol CBLCLG %nistdir%\src RL203A
+call :sub_cobol CBLCLG %nistdir%\src RL204A
+call :sub_cobol CBLCLG %nistdir%\src RL205A
+call :sub_cobol CBLCLG %nistdir%\src RL206A
+call :sub_cobol CBLCLG %nistdir%\src RL207A
+call :sub_cobol CBLCLG %nistdir%\src RL208A
+call :sub_cobol CBLCLG %nistdir%\src RL209A
+call :sub_cobol CBLCLG %nistdir%\src RL210A
+call :sub_cobol CBLCLG %nistdir%\src RL211A
+call :sub_cobol CBLCLG %nistdir%\src RL212A
+call :sub_cobol CBLCLG %nistdir%\src RL213A
+call :sub_cobol CBLCLG %nistdir%\src RL301M
+call :sub_cobol CBLCLG %nistdir%\src RL302M
+call :sub_cobol CBLCLG %nistdir%\src RL401M
+:skip_RL
+
+rem --
 rem -- sort all error messages from all compiles
-type %nistdir%\src\*.err >%nistdir%\src\$all.err 2>nul
-sort /+26 %nistdir%\src\$all.err /O %nistdir%\src\$allsort.err
+type %nistdir%\src\*.err   >%nistdir%\src\$all.err 2>nul
+type %nistdir%\z390\*.err >>%nistdir%\src\$all.err 2>nul
+sort /+17 %nistdir%\src\$all.err /O %nistdir%\src\$allsort.err
 echo .
-echo All compiles completed
+echo %copymbr% copy members and %datambr% data members
+echo %tested% compiles completed:
+echo - okay RC=0 for %testgood% tests
+echo - warn RC=4 for %testwarn% tests
+echo - err  RC=8 for %testerr% tests
+echo - any other for %testfail% tests
+echo - and %nocount% not counted
+echo .
 echo See %nistdir%\src\$allsort.err for complete list of all messages
 
 set z_ReturnCode=0
@@ -437,15 +555,20 @@ echo When the z390 path is omitted, no tests can be run
 echo When the z390 path is specified, the default is to run all tests
 echo This default can be overriden by specifying one or more of the following parameters:
 echo - cleanup = cleanup only; no compiles
+echo - ALT= ALT* copy members
 echo - CM = Communications Module
 echo - DB = Debug module
 echo - EX = Executive module
 echo - IC = Inter-Program Communication
 echo - IF = Intrinsic Functions
 echo - IX = Indexed I/O
+echo - K  = K* copy members
 echo - NC = Nucleus
+echo - OB = Obsolete features
 echo .
 echo There is no prescribed order of parameters
+echo .
+echo To specify z390 options, provide them in variable z390opt
 echo .
 goto return
 
@@ -457,3 +580,67 @@ echo %0 ERROR: Encountered RC %z_ReturnCode% - exiting
 popd
 rem ----- Lvl(%z_NestLevel%)  End %0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 exit /b %z_ReturnCode%
+
+
+
+:sub_clean
+rem -- removes all non-source files from a source directory
+rem -- %1 = source dir to clean up
+if exist %1\*.390                del %1\*.390
+if exist %1\*.BAL                del %1\*.BAL
+if exist %1\*.ERR                del %1\*.ERR
+if exist %1\*.LOG                del %1\*.LOG
+if exist %1\*.LST                del %1\*.LST
+if exist %1\*.MLC                del %1\*.MLC
+if exist %1\*.OBJ                del %1\*.OBJ
+if exist %1\*.OUT                del %1\*.OUT
+if exist %1\*.PRN                del %1\*.PRN
+if exist %1\*.CBL_ZC_LABELS.CPY  del %1\*.CBL_ZC_LABELS.CPY
+goto :EOF
+
+
+
+:sub_cobol
+rem -- compiles, links, runs a Cobol program
+rem -- %1 = batch procedure to use: CBLC / CBLCL /CBLCLG
+rem -- %2 = directory with source file
+rem -- %3 = source file name without extension
+rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
+set dir=%2
+set pgm=%3
+if /I %4. EQU NOCOUNT. set /A nocount = %nocount% + 1
+if /I %4. NEQ NOCOUNT. set /A tested  = %tested%  + 1
+rem -- set printer destination if GO step is requested
+if %1 == CBLCLG set XXXXX055=%dir%\%pgm%_XXXXX055.OUT
+call bat\%1 %z_TraceMode% %dir%\%pgm% notiming %z390opt%
+set rc=%errorlevel%
+set XXXXX055=
+rem -- bump applicable result counter
+if /I %4. EQU NOCOUNT. goto :EOF
+if %rc% == 0 (set /A testgood = %testgood% + 1 && goto :EOF)
+if %rc% == 4 (set /A testwarn = %testwarn% + 1 && goto :EOF)
+if %rc% == 8 (set /A testerr  = %testerr%  + 1 && goto :EOF)
+set /A testfail = %testfail% + 1
+goto :EOF
+
+
+
+:sub_copy
+rem -- count copy member
+rem -- %1 = batch procedure to use (irrelevant)
+rem -- %2 = directory with source file
+rem -- %3 = source file name without extension
+rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
+set /A copymbr = %copymbr% + 1
+goto :EOF
+
+
+
+:sub_data
+rem -- count copy member
+rem -- %1 = batch procedure to use (irrelevant)
+rem -- %2 = directory with source file
+rem -- %3 = source file name without extension
+rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
+set /A datambr = %datambr% + 1
+goto :EOF
