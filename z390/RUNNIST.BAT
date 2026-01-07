@@ -50,6 +50,10 @@ if /I %1. EQU K.       (set test_K=Y&&goto parmnotall)
 if /I %1. EQU NC.      (set test_NC=Y&&goto parmnotall)
 if /I %1. EQU OB.      (set test_OB=Y&&goto parmnotall)
 if /I %1. EQU RL.      (set test_RL=Y&&goto parmnotall)
+if /I %1. EQU RW.      (set test_RW=Y&&goto parmnotall)
+if /I %1. EQU SG.      (set test_SG=Y&&goto parmnotall)
+if /I %1. EQU SM.      (set test_SM=Y&&goto parmnotall)
+if /I %1. EQU SQ.      (set test_SQ=Y&&goto parmnotall)
 if /I %1. EQU cleanup. (set cleanup=Y&&goto parmnotall)
 rem -- should be the path to z390
 if exist %1\bat\CBLCLG.BAT (set z390dir=%1&&goto parmnext)
@@ -82,7 +86,9 @@ if %cleanup%. EQU Y. goto return
 rem --
 rem -- initialize result counters
 set /A copymbr  = 0
+set /A copyerr  = 0
 set /A datambr  = 0
+set /A dataerr  = 0
 set /A nocount  = 0
 set /A tested   = 0
 set /A testgood = 0
@@ -317,55 +323,55 @@ call :sub_cobol CBLCLG %nistdir%\src IX401M
 rem --
 rem -- K* copy members
 if /I %test_all%. EQU N. if /I %test_K%. NEQ Y. goto skip_K
-call :sub_copy CBL    %nistdir%\src K101A  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1DAA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1FDA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1P01  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1PRA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1PRB  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1PRC  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1SEA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1W01  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1W02  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1W03  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1W04  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1WKA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1WKB  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1WKC  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1WKY  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K1WKZ  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K2PRA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K2SEA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3FCA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3FCB  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3IOA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3IOB  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3LGE  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3OCA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3SCA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3SML  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3SNA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K3SNB  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K4NTA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K501A  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K501B  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K5SDA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K5SDB  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K6SCA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src K7SEA  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KK208A || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP001  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP002  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP003  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP004  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP005  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP006  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP007  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP008  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP009  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KP010  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KSM31  || rem intended usage unknown
-call :sub_copy CBL    %nistdir%\src KSM41  || rem intended usage unknown
+call :sub_copy CBL    %nistdir%\src K101A
+call :sub_copy CBL    %nistdir%\src K1DAA
+call :sub_copy CBL    %nistdir%\src K1FDA
+call :sub_copy CBL    %nistdir%\src K1P01
+call :sub_copy CBL    %nistdir%\src K1PRA
+call :sub_copy CBL    %nistdir%\src K1PRB
+call :sub_copy CBL    %nistdir%\src K1PRC
+call :sub_copy CBL    %nistdir%\src K1SEA
+call :sub_copy CBL    %nistdir%\src K1W01
+call :sub_copy CBL    %nistdir%\src K1W02
+call :sub_copy CBL    %nistdir%\src K1W03
+call :sub_copy CBL    %nistdir%\src K1W04
+call :sub_copy CBL    %nistdir%\src K1WKA
+call :sub_copy CBL    %nistdir%\src K1WKB
+call :sub_copy CBL    %nistdir%\src K1WKC
+call :sub_copy CBL    %nistdir%\src K1WKY
+call :sub_copy CBL    %nistdir%\src K1WKZ
+call :sub_copy CBL    %nistdir%\src K2PRA
+call :sub_copy CBL    %nistdir%\src K2SEA
+call :sub_copy CBL    %nistdir%\src K3FCA
+call :sub_copy CBL    %nistdir%\src K3FCB
+call :sub_copy CBL    %nistdir%\src K3IOA
+call :sub_copy CBL    %nistdir%\src K3IOB
+call :sub_copy CBL    %nistdir%\src K3LGE
+call :sub_copy CBL    %nistdir%\src K3OCA
+call :sub_copy CBL    %nistdir%\src K3SCA
+call :sub_copy CBL    %nistdir%\src K3SML
+call :sub_copy CBL    %nistdir%\src K3SNA
+call :sub_copy CBL    %nistdir%\src K3SNB
+call :sub_copy CBL    %nistdir%\src K4NTA || rem defined but never used (on purpose)
+call :sub_copy CBL    %nistdir%\src K501A
+call :sub_copy CBL    %nistdir%\src K501B
+call :sub_copy CBL    %nistdir%\src K5SDA
+call :sub_copy CBL    %nistdir%\src K5SDB
+call :sub_copy CBL    %nistdir%\src K6SCA
+call :sub_copy CBL    %nistdir%\src K7SEA
+call :sub_copy CBL    %nistdir%\src KK208A
+call :sub_copy CBL    %nistdir%\src KP001
+call :sub_copy CBL    %nistdir%\src KP002
+call :sub_copy CBL    %nistdir%\src KP003
+call :sub_copy CBL    %nistdir%\src KP004
+call :sub_copy CBL    %nistdir%\src KP005
+call :sub_copy CBL    %nistdir%\src KP006
+call :sub_copy CBL    %nistdir%\src KP007
+call :sub_copy CBL    %nistdir%\src KP008
+call :sub_copy CBL    %nistdir%\src KP009
+call :sub_copy CBL    %nistdir%\src KP010 || rem probably belongs with SM206A
+call :sub_copy CBL    %nistdir%\src KSM31
+call :sub_copy CBL    %nistdir%\src KSM41
 :skip_K
 
 rem --
@@ -525,12 +531,71 @@ call :sub_cobol CBLCLG %nistdir%\src RL401M
 :skip_RL
 
 rem --
+rem -- RW = Report Writer
+if /I %test_all%. EQU N. if /I %test_RW%. NEQ Y. goto skip_RW
+call :sub_cobol CBLCLG %nistdir%\src RW101A
+call :sub_cobol CBLCLG %nistdir%\src RW102A
+call :sub_cobol CBLCLG %nistdir%\src RW103A
+call :sub_cobol CBLCLG %nistdir%\src RW104A
+call :sub_cobol CBLCLG %nistdir%\src RW301M
+call :sub_cobol CBLCLG %nistdir%\src RW302M
+:skip_RW
+
+rem --
+rem -- SG = Segmentation
+if /I %test_all%. EQU N. if /I %test_SG%. NEQ Y. goto skip_SG
+call :sub_cobol CBLCLG %nistdir%\src SG101A
+call :sub_cobol CBLCLG %nistdir%\src SG102A
+call :sub_cobol CBLCLG %nistdir%\src SG103A
+call :sub_cobol CBLCLG %nistdir%\src SG104A
+call :sub_cobol CBLCLG %nistdir%\src SG105A
+call :sub_cobol CBLCLG %nistdir%\src SG106A
+call :sub_cobol CBLCLG %nistdir%\src SG201A
+call :sub_cobol CBLCLG %nistdir%\src SG202A
+call :sub_cobol CBLCLG %nistdir%\src SG203A
+call :sub_cobol CBLCLG %nistdir%\src SG204A
+call :sub_cobol CBLCLG %nistdir%\src SG302M
+call :sub_cobol CBLCLG %nistdir%\src SG303M
+call :sub_cobol CBLCLG %nistdir%\src SG401M
+:skip_SG
+
+rem --
+rem -- SM = Source Management
+if /I %test_all%. EQU N. if /I %test_SM%. NEQ Y. goto skip_SM
+call :sub_cobol CBLCLG %nistdir%\src SM101A
+call :sub_cobol CBLCLG %nistdir%\src SM102A
+call :sub_cobol CBLCLG %nistdir%\src SM103A
+call :sub_cobol CBLCLG %nistdir%\src SM104A
+call :sub_cobol CBLCLG %nistdir%\src SM105A
+call :sub_cobol CBLCLG %nistdir%\src SM106A
+call :sub_cobol CBLCLG %nistdir%\src SM107A
+call :sub_cobol CBLCLG %nistdir%\src SM201A
+call :sub_cobol CBLCLG %nistdir%\src SM202A
+call :sub_cobol CBLCLG %nistdir%\src SM203A
+call :sub_cobol CBLCLG %nistdir%\src SM204A
+call :sub_cobol CBLCLG %nistdir%\src SM205A
+call :sub_cobol CBLCLG %nistdir%\src SM206A
+call :sub_cobol CBLCLG %nistdir%\src SM207A
+call :sub_cobol CBLCLG %nistdir%\src SM208A
+call :sub_cobol CBLCLG %nistdir%\src SM301M
+call :sub_cobol CBLCLG %nistdir%\src SM401M
+:skip_SM
+
+rem --
+rem -- SQ = Sequential I/O
+if /I %test_all%. EQU N. if /I %test_SQ%. NEQ Y. goto skip_SQ
+call :sub_cobol CBLCLG %nistdir%\src  SQ101M
+call :sub_cobol CBLCLG %nistdir%\z390 SQ101M NOCOUNT || rem instead of the original
+:skip_SQ
+
+rem --
 rem -- sort all error messages from all compiles
 type %nistdir%\src\*.err   >%nistdir%\src\$all.err 2>nul
 type %nistdir%\z390\*.err >>%nistdir%\src\$all.err 2>nul
 sort /+17 %nistdir%\src\$all.err /O %nistdir%\src\$allsort.err
 echo .
-echo %copymbr% copy members and %datambr% data members
+echo %copymbr% copy members found and %copyerr% not found
+echo %datambr% data members found and %dataerr% not found
 echo %tested% compiles completed:
 echo - okay RC=0 for %testgood% tests
 echo - warn RC=4 for %testwarn% tests
@@ -565,6 +630,10 @@ echo - IX = Indexed I/O
 echo - K  = K* copy members
 echo - NC = Nucleus
 echo - OB = Obsolete features
+echo - RW = Report Writer
+echo - SG = Segmentation
+echo - SM = Source Management
+echo - SQ = Sequential I/O
 echo .
 echo There is no prescribed order of parameters
 echo .
@@ -611,10 +680,12 @@ set pgm=%3
 if /I %4. EQU NOCOUNT. set /A nocount = %nocount% + 1
 if /I %4. NEQ NOCOUNT. set /A tested  = %tested%  + 1
 rem -- set printer destination if GO step is requested
-if %1 == CBLCLG set XXXXX055=%dir%\%pgm%_XXXXX055.OUT
+set XXXXX047=%dir%
+set XXXXX048=%dir%
+if %1 == CBLCLG (set XXXXX055=%dir%\%pgm%_XXXXX055.OUT
+         ) else (set XXXXX055=)
 call bat\%1 %z_TraceMode% %dir%\%pgm% notiming %z390opt%
 set rc=%errorlevel%
-set XXXXX055=
 rem -- bump applicable result counter
 if /I %4. EQU NOCOUNT. goto :EOF
 if %rc% == 0 (set /A testgood = %testgood% + 1 && goto :EOF)
@@ -631,7 +702,8 @@ rem -- %1 = batch procedure to use (irrelevant)
 rem -- %2 = directory with source file
 rem -- %3 = source file name without extension
 rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
-set /A copymbr = %copymbr% + 1
+if exist %2\%3.CPZ (set /A copymbr = %copymbr% + 1
+            ) else (set /A copyerr = %copyerr% + 1)
 goto :EOF
 
 
@@ -642,5 +714,6 @@ rem -- %1 = batch procedure to use (irrelevant)
 rem -- %2 = directory with source file
 rem -- %3 = source file name without extension
 rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
-set /A datambr = %datambr% + 1
+if exist %2\%3.DAT (set /A datambr = %datambr% + 1
+            ) else (set /A dataerr = %dataerr% + 1)
 goto :EOF
