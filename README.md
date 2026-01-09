@@ -50,3 +50,20 @@ https://sourceforge.net/projects/gnucobol/files/nist/
 
 The best case is this code could be treated as in the public domain.
 
+## More information
+
+- [NIST COBOL-85 Test Suite documentation](docs/NIST COBOL-85 Test Suite.md)
+- [NIST CCVS85 Concepts](docs/NIST_SP_500-186_CCVS85_Concepts.pdf)
+- [NIST COBOL Intrinsic Functions Test](docs/NIST_SP_500-203_COBOL_Intrinsic_Functions_Test.pdf)
+- [NISTIR CCVS Documentation](docs/NISTIR_5731_CCVS_Documentation.pdf)
+
+## Status in relation to z390 / zCobol compiler
+
+The zCobol compiler has a lot of limitations resulting in a large number of errors and failed compiles.
+The z390 subdirectory holds source versions specific to z390/zCobol. Most importantly:
+- The IC module uses nested programs which are not supported by zCobol. The programs have been stored as separate source files.
+- The copy members used in the SM module have an extension of .CPY, but zCobol requires .CPZ instead. Required copy members are stored as .CPZ files.
+- The RUNNIST.BAT script will compile the entire NIST suite and create #full_log.txt
+- The #full_log.txt is intended to be used to monitor effects of code changes in z390/zCobol.
+  Each code change to zCobol should lead to reduction of error messages in this file. No new additions should be allowed to appear.
+
