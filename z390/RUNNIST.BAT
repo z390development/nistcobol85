@@ -54,6 +54,7 @@ if /I %1. EQU RW.      (set test_RW=Y&&goto parmnotall)
 if /I %1. EQU SG.      (set test_SG=Y&&goto parmnotall)
 if /I %1. EQU SM.      (set test_SM=Y&&goto parmnotall)
 if /I %1. EQU SQ.      (set test_SQ=Y&&goto parmnotall)
+if /I %1. EQU ST.      (set test_ST=Y&&goto parmnotall)
 if /I %1. EQU cleanup. (set cleanup=Y&&goto parmnotall)
 rem -- should be the path to z390
 if exist %1\bat\CBLCLG.BAT (set z390dir=%1&&goto parmnext)
@@ -369,7 +370,7 @@ call :sub_copy CBL    %nistdir%\src KP006
 call :sub_copy CBL    %nistdir%\src KP007
 call :sub_copy CBL    %nistdir%\src KP008
 call :sub_copy CBL    %nistdir%\src KP009
-call :sub_copy CBL    %nistdir%\src KP010 || rem probably belongs with SM206A
+call :sub_copy CBL    %nistdir%\src KP010 || rem not used but probably belonged with SM206A
 call :sub_copy CBL    %nistdir%\src KSM31
 call :sub_copy CBL    %nistdir%\src KSM41
 :skip_K
@@ -586,7 +587,136 @@ rem -- SQ = Sequential I/O
 if /I %test_all%. EQU N. if /I %test_SQ%. NEQ Y. goto skip_SQ
 call :sub_cobol CBLCLG %nistdir%\src  SQ101M
 call :sub_cobol CBLCLG %nistdir%\z390 SQ101M NOCOUNT || rem instead of the original
+call :sub_cobol CBLCLG %nistdir%\src  SQ102A
+call :sub_cobol CBLCLG %nistdir%\src  SQ103A
+call :sub_cobol CBLCLG %nistdir%\src  SQ104A
+call :sub_cobol CBLCLG %nistdir%\src  SQ105A
+call :sub_cobol CBLCLG %nistdir%\src  SQ106A
+call :sub_cobol CBLCLG %nistdir%\src  SQ107A
+call :sub_cobol CBLCLG %nistdir%\src  SQ108A
+call :sub_cobol CBLCLG %nistdir%\src  SQ109M
+call :sub_cobol CBLCLG %nistdir%\src  SQ110M
+call :sub_cobol CBLCLG %nistdir%\src  SQ111A
+call :sub_cobol CBLCLG %nistdir%\src  SQ112A
+call :sub_cobol CBLCLG %nistdir%\src  SQ113A
+call :sub_cobol CBLCLG %nistdir%\src  SQ114A
+call :sub_cobol CBLCLG %nistdir%\src  SQ115A
+call :sub_cobol CBLCLG %nistdir%\src  SQ116A
+call :sub_cobol CBLCLG %nistdir%\src  SQ117A
+call :sub_cobol CBLCLG %nistdir%\src  SQ121A
+call :sub_cobol CBLCLG %nistdir%\src  SQ122A
+call :sub_cobol CBLCLG %nistdir%\src  SQ123A
+call :sub_cobol CBLCLG %nistdir%\src  SQ124A
+call :sub_cobol CBLCLG %nistdir%\src  SQ125A
+call :sub_cobol CBLCLG %nistdir%\src  SQ126A
+call :sub_cobol CBLCLG %nistdir%\src  SQ127A
+call :sub_cobol CBLCLG %nistdir%\src  SQ128A
+call :sub_cobol CBLCLG %nistdir%\src  SQ129A
+call :sub_cobol CBLCLG %nistdir%\src  SQ130A
+call :sub_cobol CBLCLG %nistdir%\src  SQ131A
+call :sub_cobol CBLCLG %nistdir%\src  SQ132A
+call :sub_cobol CBLCLG %nistdir%\src  SQ133A
+call :sub_cobol CBLCLG %nistdir%\src  SQ134A
+call :sub_cobol CBLCLG %nistdir%\src  SQ135A
+call :sub_cobol CBLCLG %nistdir%\src  SQ136A
+call :sub_cobol CBLCLG %nistdir%\src  SQ137A
+call :sub_cobol CBLCLG %nistdir%\src  SQ138A
+call :sub_cobol CBLCLG %nistdir%\src  SQ139A
+call :sub_cobol CBLCLG %nistdir%\src  SQ140A
+call :sub_cobol CBLCLG %nistdir%\src  SQ141A
+call :sub_cobol CBLCLG %nistdir%\src  SQ142A
+call :sub_cobol CBLCLG %nistdir%\src  SQ143A
+call :sub_cobol CBLCLG %nistdir%\src  SQ144A
+call :sub_cobol CBLCLG %nistdir%\src  SQ146A
+call :sub_cobol CBLCLG %nistdir%\src  SQ147A
+call :sub_cobol CBLCLG %nistdir%\src  SQ148A
+call :sub_cobol CBLCLG %nistdir%\src  SQ149A
+call :sub_cobol CBLCLG %nistdir%\src  SQ150A
+call :sub_cobol CBLCLG %nistdir%\src  SQ151A
+call :sub_cobol CBLCLG %nistdir%\src  SQ152A
+call :sub_cobol CBLCLG %nistdir%\src  SQ153A
+call :sub_cobol CBLCLG %nistdir%\src  SQ154A
+call :sub_cobol CBLCLG %nistdir%\src  SQ155A
+call :sub_cobol CBLCLG %nistdir%\src  SQ156A
+call :sub_cobol CBLCLG %nistdir%\src  SQ201M
+call :sub_cobol CBLCLG %nistdir%\src  SQ202A
+call :sub_cobol CBLCLG %nistdir%\src  SQ203A
+call :sub_cobol CBLCLG %nistdir%\src  SQ204A
+call :sub_cobol CBLCLG %nistdir%\src  SQ205A
+call :sub_cobol CBLCLG %nistdir%\src  SQ206A
+call :sub_cobol CBLCLG %nistdir%\src  SQ207M
+call :sub_cobol CBLCLG %nistdir%\src  SQ208M
+call :sub_cobol CBLCLG %nistdir%\src  SQ209M
+call :sub_cobol CBLCLG %nistdir%\src  SQ210M
+call :sub_cobol CBLCLG %nistdir%\src  SQ211A
+call :sub_cobol CBLCLG %nistdir%\src  SQ212A
+call :sub_cobol CBLCLG %nistdir%\src  SQ213A
+call :sub_cobol CBLCLG %nistdir%\src  SQ214A
+call :sub_cobol CBLCLG %nistdir%\src  SQ215A
+call :sub_cobol CBLCLG %nistdir%\src  SQ216A
+call :sub_cobol CBLCLG %nistdir%\src  SQ217A
+call :sub_cobol CBLCLG %nistdir%\src  SQ218A
+call :sub_cobol CBLCLG %nistdir%\src  SQ219A
+call :sub_cobol CBLCLG %nistdir%\src  SQ220A
+call :sub_cobol CBLCLG %nistdir%\src  SQ221A
+call :sub_cobol CBLCLG %nistdir%\src  SQ222A
+call :sub_cobol CBLCLG %nistdir%\src  SQ223A
+call :sub_cobol CBLCLG %nistdir%\src  SQ224A
+call :sub_cobol CBLCLG %nistdir%\src  SQ225A
+call :sub_cobol CBLCLG %nistdir%\src  SQ226A
+call :sub_cobol CBLCLG %nistdir%\src  SQ227A
+call :sub_cobol CBLCLG %nistdir%\src  SQ228A
+call :sub_cobol CBLCLG %nistdir%\src  SQ229A
+call :sub_cobol CBLCLG %nistdir%\src  SQ230A
+call :sub_cobol CBLCLG %nistdir%\src  SQ302M
+call :sub_cobol CBLCLG %nistdir%\src  SQ303M
+call :sub_cobol CBLCLG %nistdir%\src  SQ401M
 :skip_SQ
+
+rem --
+rem -- ST = Sort / Merge
+if /I %test_all%. EQU N. if /I %test_ST%. NEQ Y. goto skip_ST
+call :sub_cobol CBLCLG %nistdir%\src  ST101A
+call :sub_cobol CBLCLG %nistdir%\src  ST102A
+call :sub_cobol CBLCLG %nistdir%\src  ST103A
+call :sub_cobol CBLCLG %nistdir%\src  ST104A
+call :sub_cobol CBLCLG %nistdir%\src  ST105A
+call :sub_cobol CBLCLG %nistdir%\src  ST106A
+call :sub_cobol CBLCLG %nistdir%\src  ST107A
+call :sub_cobol CBLCLG %nistdir%\src  ST108A
+call :sub_cobol CBLCLG %nistdir%\src  ST109A
+call :sub_cobol CBLCLG %nistdir%\src  ST110A
+call :sub_cobol CBLCLG %nistdir%\src  ST111A
+call :sub_cobol CBLCLG %nistdir%\src  ST112M
+call :sub_cobol CBLCLG %nistdir%\src  ST113M
+call :sub_cobol CBLCLG %nistdir%\src  ST114M
+call :sub_cobol CBLCLG %nistdir%\src  ST115A
+call :sub_cobol CBLCLG %nistdir%\src  ST116A
+call :sub_cobol CBLCLG %nistdir%\src  ST117A
+call :sub_cobol CBLCLG %nistdir%\src  ST118A
+call :sub_cobol CBLCLG %nistdir%\src  ST119A
+call :sub_cobol CBLCLG %nistdir%\src  ST120A
+call :sub_cobol CBLCLG %nistdir%\src  ST121A
+call :sub_cobol CBLCLG %nistdir%\src  ST122M
+call :sub_cobol CBLCLG %nistdir%\src  ST123M
+call :sub_cobol CBLCLG %nistdir%\src  ST124M
+call :sub_cobol CBLCLG %nistdir%\src  ST125A
+call :sub_cobol CBLCLG %nistdir%\src  ST126A
+call :sub_cobol CBLCLG %nistdir%\src  ST127A
+call :sub_cobol CBLCLG %nistdir%\src  ST131A
+call :sub_cobol CBLCLG %nistdir%\src  ST132M
+call :sub_cobol CBLCLG %nistdir%\src  ST133M
+call :sub_cobol CBLCLG %nistdir%\src  ST134M
+call :sub_cobol CBLCLG %nistdir%\src  ST135A
+call :sub_cobol CBLCLG %nistdir%\src  ST136A
+call :sub_cobol CBLCLG %nistdir%\src  ST137A
+call :sub_cobol CBLCLG %nistdir%\src  ST139A
+call :sub_cobol CBLCLG %nistdir%\src  ST140A
+call :sub_cobol CBLCLG %nistdir%\src  ST144A
+call :sub_cobol CBLCLG %nistdir%\src  ST146A
+call :sub_cobol CBLCLG %nistdir%\src  ST147A
+call :sub_cobol CBLCLG %nistdir%\src  ST301M
+:skip_ST
 
 rem --
 rem -- sort all error messages from all compiles
@@ -679,12 +809,13 @@ set dir=%2
 set pgm=%3
 if /I %4. EQU NOCOUNT. set /A nocount = %nocount% + 1
 if /I %4. NEQ NOCOUNT. set /A tested  = %tested%  + 1
+if not exist %2\%3.CBL goto :sub_nocbl
 rem -- set printer destination if GO step is requested
 set XXXXX047=%dir%
 set XXXXX048=%dir%
 if %1 == CBLCLG (set XXXXX055=%dir%\%pgm%_XXXXX055.OUT
          ) else (set XXXXX055=)
-call bat\%1 %z_TraceMode% %dir%\%pgm% notiming %z390opt%
+call bat\%1 %z_TraceMode% %dir%\%pgm% notiming SYSCPY(+%~dps0) %z390opt%
 set rc=%errorlevel%
 rem -- bump applicable result counter
 if /I %4. EQU NOCOUNT. goto :EOF
@@ -692,6 +823,11 @@ if %rc% == 0 (set /A testgood = %testgood% + 1 && goto :EOF)
 if %rc% == 4 (set /A testwarn = %testwarn% + 1 && goto :EOF)
 if %rc% == 8 (set /A testerr  = %testerr%  + 1 && goto :EOF)
 set /A testfail = %testfail% + 1
+goto :EOF
+:sub_nocbl
+set /A testerr = %testerr% + 1
+echo %2\%3.CBL not found
+echo %2\%3.CBL not found >>%2\%3.ERR
 goto :EOF
 
 
@@ -702,8 +838,13 @@ rem -- %1 = batch procedure to use (irrelevant)
 rem -- %2 = directory with source file
 rem -- %3 = source file name without extension
 rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
-if exist %2\%3.CPZ (set /A copymbr = %copymbr% + 1
-            ) else (set /A copyerr = %copyerr% + 1)
+if not exist %2\%3.CPY goto :sub_nocopy
+set /A copymbr = %copymbr% + 1
+goto :EOF
+:sub_nocopy
+set /A copyerr = %copyerr% + 1
+echo %2\%3.CPY not found
+echo %2\%3.CPY not found >>%2\%3.ERR
 goto :EOF
 
 
@@ -714,6 +855,11 @@ rem -- %1 = batch procedure to use (irrelevant)
 rem -- %2 = directory with source file
 rem -- %3 = source file name without extension
 rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
-if exist %2\%3.DAT (set /A datambr = %datambr% + 1
-            ) else (set /A dataerr = %dataerr% + 1)
+if not exist %2\%3.DAT goto :sub_nodata
+set /A datambr = %datambr% + 1
+goto :EOF
+:sub_nodata
+set /A dataerr = %dataerr% + 1
+echo %2\%3.DAT not found
+echo %2\%3.DAT not found >>%2\%3.ERR
 goto :EOF
