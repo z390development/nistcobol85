@@ -50,3 +50,9 @@ https://sourceforge.net/projects/gnucobol/files/nist/
 
 The best case is this code could be treated as in the public domain.
 
+## More information
+
+- [NIST COBOL-85 Test Suite documentation](docs/NIST COBOL-85 Test Suite.md)
+- [NIST CCVS85 Concepts](docs/NIST_SP_500-186_CCVS85_Concepts.pdf)
+- [NIST COBOL Intrinsic Functions Test](docs/NIST_SP_500-203_COBOL_Intrinsic_Functions_Test.pdf)
+- [NISTIR CCVS Documentation](docs/NISTIR_5731_CCVS_Documentation.pdf)
