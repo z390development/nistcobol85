@@ -720,9 +720,10 @@ call :sub_cobol CBLCLG %nistdir%\src  ST301M
 
 rem --
 rem -- sort all error messages from all compiles
-type %nistdir%\src\*.err   >%nistdir%\src\$all.err 2>nul
-type %nistdir%\z390\*.err >>%nistdir%\src\$all.err 2>nul
-sort /+17 %nistdir%\src\$all.err /O %nistdir%\src\$allsort.err
+type %nistdir%\src\*.err   >%nistdir%\src\#all.err 2>nul
+type %nistdir%\z390\*.err >>%nistdir%\src\#all.err 2>nul
+sort /+17 %nistdir%\src\#all.err /O %nistdir%\src\#allsort.err
+copy %nistdir%\src\#all.err %nistdir%\z390\#full_log.txt
 echo .
 echo %copymbr% copy members found and %copyerr% not found
 echo %datambr% data members found and %dataerr% not found
