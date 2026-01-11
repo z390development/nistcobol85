@@ -9,6 +9,7 @@ if /I "%1" == "tron" (set z_TraceMode=tron
                                      ) else (set z_TraceMode=)
                       )
 set /A z_NestLevel=%z_NestLevel%+1
+set NIST_RC=0
 rem ----- Lvl(%z_NestLevel%) Start %0 %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 rem -- *************************************************************
@@ -67,13 +68,17 @@ shift /1
 goto parmloop
 :parmdone
 rem -- check for prior errors and validate path to z390
+rem -- extract current hash ID from NIST and z390 repositories
 set nistdir=%CD%
+for /f "delims=" %%i in ('git rev-parse HEAD') do set NIST_LVL=%%i || goto no_nistrepo
+
 if %parmrc%   EQU 8  goto return
 if %cleanup%. EQU Y. goto cleanup
 if %z390dir%. EQU .  goto help
 if not exist %z390dir%\z390.jar goto help
 rem -- switch to z390 directory
 cd %z390dir%
+for /f "delims=" %%i in ('git rev-parse HEAD') do set z390_LVL=%%i || goto no_z390repo
 
 rem --
 rem -- clear leftovers from prior runs
@@ -105,10 +110,68 @@ call :sub_copy CBL    %nistdir%\src ALTLB || rem intended for use by EXEC85
 :skip_ALT
 
 rem --
+rem -- K* copy members
+if /I %test_all%. EQU N. if /I %test_K%. NEQ Y. goto skip_K
+call :sub_copy CBL    %nistdir%\src K101A
+call :sub_copy CBL    %nistdir%\src K1DAA
+call :sub_copy CBL    %nistdir%\src K1FDA
+call :sub_copy CBL    %nistdir%\src K1P01
+call :sub_copy CBL    %nistdir%\src K1PRA
+call :sub_copy CBL    %nistdir%\src K1PRB
+call :sub_copy CBL    %nistdir%\src K1PRC
+call :sub_copy CBL    %nistdir%\src K1SEA
+call :sub_copy CBL    %nistdir%\src K1W01
+call :sub_copy CBL    %nistdir%\src K1W02
+call :sub_copy CBL    %nistdir%\src K1W03
+call :sub_copy CBL    %nistdir%\src K1W04
+call :sub_copy CBL    %nistdir%\src K1WKA
+call :sub_copy CBL    %nistdir%\src K1WKB
+call :sub_copy CBL    %nistdir%\src K1WKC
+call :sub_copy CBL    %nistdir%\src K1WKY
+call :sub_copy CBL    %nistdir%\src K1WKZ
+call :sub_copy CBL    %nistdir%\src K2PRA
+call :sub_copy CBL    %nistdir%\src K2SEA
+call :sub_copy CBL    %nistdir%\src K3FCA
+call :sub_copy CBL    %nistdir%\src K3FCB
+call :sub_copy CBL    %nistdir%\src K3IOA
+call :sub_copy CBL    %nistdir%\src K3IOB
+call :sub_copy CBL    %nistdir%\src K3LGE
+call :sub_copy CBL    %nistdir%\src K3OCA
+call :sub_copy CBL    %nistdir%\src K3SCA
+call :sub_copy CBL    %nistdir%\src K3SML
+call :sub_copy CBL    %nistdir%\src K3SNA
+call :sub_copy CBL    %nistdir%\src K3SNB
+call :sub_copy CBL    %nistdir%\src K4NTA || rem defined but never used (on purpose)
+call :sub_copy CBL    %nistdir%\src K501A
+call :sub_copy CBL    %nistdir%\src K501B
+call :sub_copy CBL    %nistdir%\src K5SDA
+call :sub_copy CBL    %nistdir%\src K5SDB
+call :sub_copy CBL    %nistdir%\src K6SCA
+call :sub_copy CBL    %nistdir%\src K7SEA
+call :sub_copy CBL    %nistdir%\src KK208A
+call :sub_copy CBL    %nistdir%\src KP001
+call :sub_copy CBL    %nistdir%\src KP002
+call :sub_copy CBL    %nistdir%\src KP003
+call :sub_copy CBL    %nistdir%\src KP004
+call :sub_copy CBL    %nistdir%\src KP005
+call :sub_copy CBL    %nistdir%\src KP006
+call :sub_copy CBL    %nistdir%\src KP007
+call :sub_copy CBL    %nistdir%\src KP008
+call :sub_copy CBL    %nistdir%\src KP009
+call :sub_copy CBL    %nistdir%\src KP010 || rem not used but probably belonged with SM206A
+call :sub_copy CBL    %nistdir%\src KSM31
+call :sub_copy CBL    %nistdir%\src KSM41
+:skip_K
+
+rem --
+rem -- EX = Executive module
+if /I %test_all%. EQU N. if /I %test_EX%. NEQ Y. goto skip_EX
+call :sub_cobol CBLCLG %nistdir%\src EXEC85
+:skip_EX
+
+rem --
 rem -- CM = Communications Module
 if /I %test_all%. EQU N. if /I %test_CM%. NEQ Y. goto skip_CM
-call :sub_cobol CBLCLG %nistdir%\src CM101M
-call :sub_cobol CBLCLG %nistdir%\src CM102M
 call :sub_cobol CBLCLG %nistdir%\src CM101M
 call :sub_cobol CBLCLG %nistdir%\src CM102M
 call :sub_cobol CBLCLG %nistdir%\src CM103M
@@ -139,12 +202,6 @@ call :sub_cobol CBLCLG %nistdir%\src DB303M
 call :sub_cobol CBLCLG %nistdir%\src DB304M
 call :sub_cobol CBLCLG %nistdir%\src DB305M
 :skip_DB
-
-rem --
-rem -- EX = Executive module
-if /I %test_all%. EQU N. if /I %test_EX%. NEQ Y. goto skip_EX
-call :sub_cobol CBLCLG %nistdir%\src EXEC85
-:skip_EX
 
 rem --
 rem -- IC = Inter-Program Communication - subprograms must be compiled before each main program!
@@ -276,30 +333,30 @@ call :sub_cobol CBLCLG %nistdir%\src IF403M
 rem --
 rem -- IX = Indexed I/O
 if /I %test_all%. EQU N. if /I %test_IX%. NEQ Y. goto skip_IX
+call :sub_cobol CBLC   %nistdir%\src IX102A
+call :sub_cobol CBLC   %nistdir%\src IX103A
 call :sub_cobol CBLCLG %nistdir%\src IX101A
-call :sub_cobol CBLCLG %nistdir%\src IX102A
-call :sub_cobol CBLCLG %nistdir%\src IX103A
 call :sub_cobol CBLCLG %nistdir%\src IX104A
 call :sub_cobol CBLCLG %nistdir%\src IX105A
 call :sub_cobol CBLCLG %nistdir%\src IX106A
 call :sub_cobol CBLCLG %nistdir%\src IX107A
 call :sub_cobol CBLCLG %nistdir%\src IX108A
+call :sub_cobol CBLC   %nistdir%\src IX110A
+call :sub_cobol CBLC   %nistdir%\src IX111A
 call :sub_cobol CBLCLG %nistdir%\src IX109A
-call :sub_cobol CBLCLG %nistdir%\src IX110A
-call :sub_cobol CBLCLG %nistdir%\src IX111A
 call :sub_cobol CBLCLG %nistdir%\src IX112A
+call :sub_cobol CBLC   %nistdir%\src IX114A
+call :sub_cobol CBLC   %nistdir%\src IX115A
+call :sub_cobol CBLC   %nistdir%\src IX116A
+call :sub_cobol CBLC   %nistdir%\src IX117A
+call :sub_cobol CBLC   %nistdir%\src IX118A
+call :sub_cobol CBLC   %nistdir%\src IX119A
+call :sub_cobol CBLC   %nistdir%\src IX120A
 call :sub_cobol CBLCLG %nistdir%\src IX113A
-call :sub_cobol CBLCLG %nistdir%\src IX114A
-call :sub_cobol CBLCLG %nistdir%\src IX115A
-call :sub_cobol CBLCLG %nistdir%\src IX116A
-call :sub_cobol CBLCLG %nistdir%\src IX117A
-call :sub_cobol CBLCLG %nistdir%\src IX118A
-call :sub_cobol CBLCLG %nistdir%\src IX119A
-call :sub_cobol CBLCLG %nistdir%\src IX120A
 call :sub_cobol CBLCLG %nistdir%\src IX121A
+call :sub_cobol CBLC   %nistdir%\src IX202A
+call :sub_cobol CBLC   %nistdir%\src IX203A
 call :sub_cobol CBLCLG %nistdir%\src IX201A
-call :sub_cobol CBLCLG %nistdir%\src IX202A
-call :sub_cobol CBLCLG %nistdir%\src IX203A
 call :sub_cobol CBLCLG %nistdir%\src IX204A
 call :sub_cobol CBLCLG %nistdir%\src IX205A
 call :sub_cobol CBLCLG %nistdir%\src IX206A
@@ -320,60 +377,6 @@ call :sub_cobol CBLCLG %nistdir%\src IX302M
 call :sub_cobol CBLCLG %nistdir%\src IX401M
 :skip_IX
 
-
-rem --
-rem -- K* copy members
-if /I %test_all%. EQU N. if /I %test_K%. NEQ Y. goto skip_K
-call :sub_copy CBL    %nistdir%\src K101A
-call :sub_copy CBL    %nistdir%\src K1DAA
-call :sub_copy CBL    %nistdir%\src K1FDA
-call :sub_copy CBL    %nistdir%\src K1P01
-call :sub_copy CBL    %nistdir%\src K1PRA
-call :sub_copy CBL    %nistdir%\src K1PRB
-call :sub_copy CBL    %nistdir%\src K1PRC
-call :sub_copy CBL    %nistdir%\src K1SEA
-call :sub_copy CBL    %nistdir%\src K1W01
-call :sub_copy CBL    %nistdir%\src K1W02
-call :sub_copy CBL    %nistdir%\src K1W03
-call :sub_copy CBL    %nistdir%\src K1W04
-call :sub_copy CBL    %nistdir%\src K1WKA
-call :sub_copy CBL    %nistdir%\src K1WKB
-call :sub_copy CBL    %nistdir%\src K1WKC
-call :sub_copy CBL    %nistdir%\src K1WKY
-call :sub_copy CBL    %nistdir%\src K1WKZ
-call :sub_copy CBL    %nistdir%\src K2PRA
-call :sub_copy CBL    %nistdir%\src K2SEA
-call :sub_copy CBL    %nistdir%\src K3FCA
-call :sub_copy CBL    %nistdir%\src K3FCB
-call :sub_copy CBL    %nistdir%\src K3IOA
-call :sub_copy CBL    %nistdir%\src K3IOB
-call :sub_copy CBL    %nistdir%\src K3LGE
-call :sub_copy CBL    %nistdir%\src K3OCA
-call :sub_copy CBL    %nistdir%\src K3SCA
-call :sub_copy CBL    %nistdir%\src K3SML
-call :sub_copy CBL    %nistdir%\src K3SNA
-call :sub_copy CBL    %nistdir%\src K3SNB
-call :sub_copy CBL    %nistdir%\src K4NTA || rem defined but never used (on purpose)
-call :sub_copy CBL    %nistdir%\src K501A
-call :sub_copy CBL    %nistdir%\src K501B
-call :sub_copy CBL    %nistdir%\src K5SDA
-call :sub_copy CBL    %nistdir%\src K5SDB
-call :sub_copy CBL    %nistdir%\src K6SCA
-call :sub_copy CBL    %nistdir%\src K7SEA
-call :sub_copy CBL    %nistdir%\src KK208A
-call :sub_copy CBL    %nistdir%\src KP001
-call :sub_copy CBL    %nistdir%\src KP002
-call :sub_copy CBL    %nistdir%\src KP003
-call :sub_copy CBL    %nistdir%\src KP004
-call :sub_copy CBL    %nistdir%\src KP005
-call :sub_copy CBL    %nistdir%\src KP006
-call :sub_copy CBL    %nistdir%\src KP007
-call :sub_copy CBL    %nistdir%\src KP008
-call :sub_copy CBL    %nistdir%\src KP009
-call :sub_copy CBL    %nistdir%\src KP010 || rem not used but probably belonged with SM206A
-call :sub_copy CBL    %nistdir%\src KSM31
-call :sub_copy CBL    %nistdir%\src KSM41
-:skip_K
 
 rem --
 rem -- NC = Nucleus
@@ -486,24 +489,24 @@ call :sub_cobol CBLCLG %nistdir%\src OBIC1A
 call :sub_cobol CBLCLG %nistdir%\src OBNC1M
 call :sub_cobol CBLCLG %nistdir%\src OBNC2M
 call :sub_cobol CBLCLG %nistdir%\src OBSQ1A
+call :sub_cobol CBLC   %nistdir%\src OBSQ4A
+call :sub_cobol CBLC   %nistdir%\src OBSQ5A
 call :sub_cobol CBLCLG %nistdir%\src OBSQ3A
-call :sub_cobol CBLCLG %nistdir%\src OBSQ4A
-call :sub_cobol CBLCLG %nistdir%\src OBSQ5A
 :skip_OB
 
 rem --
 rem -- RL = Relative I/O
 if /I %test_all%. EQU N. if /I %test_RL%. NEQ Y. goto skip_RL
+call :sub_cobol CBLC   %nistdir%\src RL102A
+call :sub_cobol CBLC   %nistdir%\src RL103A
 call :sub_cobol CBLCLG %nistdir%\src RL101A
-call :sub_cobol CBLCLG %nistdir%\src RL102A
-call :sub_cobol CBLCLG %nistdir%\src RL103A
 call :sub_cobol CBLCLG %nistdir%\src RL104A
 call :sub_cobol CBLCLG %nistdir%\src RL105A
 call :sub_cobol CBLCLG %nistdir%\src RL106A
 call :sub_cobol CBLCLG %nistdir%\src RL107A
+call :sub_cobol CBLC   %nistdir%\src RL109A
+call :sub_cobol CBLC   %nistdir%\src RL110A
 call :sub_cobol CBLCLG %nistdir%\src RL108A
-call :sub_cobol CBLCLG %nistdir%\src RL109A
-call :sub_cobol CBLCLG %nistdir%\src RL110A
 call :sub_cobol CBLCLG %nistdir%\src RL111A
 call :sub_cobol CBLCLG %nistdir%\src RL112A
 call :sub_cobol CBLCLG %nistdir%\src RL113A
@@ -513,19 +516,19 @@ call :sub_cobol CBLCLG %nistdir%\src RL116A
 call :sub_cobol CBLCLG %nistdir%\src RL117A
 call :sub_cobol CBLCLG %nistdir%\src RL118A
 call :sub_cobol CBLCLG %nistdir%\src RL119A
+call :sub_cobol CBLC   %nistdir%\src RL202A
+call :sub_cobol CBLC   %nistdir%\src RL203A
 call :sub_cobol CBLCLG %nistdir%\src RL201A
-call :sub_cobol CBLCLG %nistdir%\src RL202A
-call :sub_cobol CBLCLG %nistdir%\src RL203A
 call :sub_cobol CBLCLG %nistdir%\src RL204A
 call :sub_cobol CBLCLG %nistdir%\src RL205A
+call :sub_cobol CBLC   %nistdir%\src RL207A
+call :sub_cobol CBLC   %nistdir%\src RL208A
 call :sub_cobol CBLCLG %nistdir%\src RL206A
-call :sub_cobol CBLCLG %nistdir%\src RL207A
-call :sub_cobol CBLCLG %nistdir%\src RL208A
 call :sub_cobol CBLCLG %nistdir%\src RL209A
 call :sub_cobol CBLCLG %nistdir%\src RL210A
 call :sub_cobol CBLCLG %nistdir%\src RL211A
+call :sub_cobol CBLC   %nistdir%\src RL213A
 call :sub_cobol CBLCLG %nistdir%\src RL212A
-call :sub_cobol CBLCLG %nistdir%\src RL213A
 call :sub_cobol CBLCLG %nistdir%\src RL301M
 call :sub_cobol CBLCLG %nistdir%\src RL302M
 call :sub_cobol CBLCLG %nistdir%\src RL401M
@@ -561,19 +564,19 @@ call :sub_cobol CBLCLG %nistdir%\src SG401M
 :skip_SG
 
 rem --
-rem -- SM = Source Management
+rem -- SM = Source Modules
 if /I %test_all%. EQU N. if /I %test_SM%. NEQ Y. goto skip_SM
+call :sub_cobol CBLC   %nistdir%\src SM102A
 call :sub_cobol CBLCLG %nistdir%\src SM101A
-call :sub_cobol CBLCLG %nistdir%\src SM102A
+call :sub_cobol CBLC   %nistdir%\src SM104A
 call :sub_cobol CBLCLG %nistdir%\src SM103A
-call :sub_cobol CBLCLG %nistdir%\src SM104A
 call :sub_cobol CBLCLG %nistdir%\src SM105A
 call :sub_cobol CBLCLG %nistdir%\src SM106A
 call :sub_cobol CBLCLG %nistdir%\src SM107A
+call :sub_cobol CBLC   %nistdir%\src SM202A
 call :sub_cobol CBLCLG %nistdir%\src SM201A
-call :sub_cobol CBLCLG %nistdir%\src SM202A
+call :sub_cobol CBLC   %nistdir%\src SM204A
 call :sub_cobol CBLCLG %nistdir%\src SM203A
-call :sub_cobol CBLCLG %nistdir%\src SM204A
 call :sub_cobol CBLCLG %nistdir%\src SM205A
 call :sub_cobol CBLCLG %nistdir%\src SM206A
 call :sub_cobol CBLCLG %nistdir%\src SM207A
@@ -639,8 +642,8 @@ call :sub_cobol CBLCLG %nistdir%\src  SQ154A
 call :sub_cobol CBLCLG %nistdir%\src  SQ155A
 call :sub_cobol CBLCLG %nistdir%\src  SQ156A
 call :sub_cobol CBLCLG %nistdir%\src  SQ201M
+call :sub_cobol CBLC   %nistdir%\src  SQ203A
 call :sub_cobol CBLCLG %nistdir%\src  SQ202A
-call :sub_cobol CBLCLG %nistdir%\src  SQ203A
 call :sub_cobol CBLCLG %nistdir%\src  SQ204A
 call :sub_cobol CBLCLG %nistdir%\src  SQ205A
 call :sub_cobol CBLCLG %nistdir%\src  SQ206A
@@ -676,37 +679,37 @@ call :sub_cobol CBLCLG %nistdir%\src  SQ401M
 rem --
 rem -- ST = Sort / Merge
 if /I %test_all%. EQU N. if /I %test_ST%. NEQ Y. goto skip_ST
+call :sub_cobol CBLC   %nistdir%\src  ST102A
+call :sub_cobol CBLC   %nistdir%\src  ST103A
 call :sub_cobol CBLCLG %nistdir%\src  ST101A
-call :sub_cobol CBLCLG %nistdir%\src  ST102A
-call :sub_cobol CBLCLG %nistdir%\src  ST103A
+call :sub_cobol CBLC   %nistdir%\src  ST105A
 call :sub_cobol CBLCLG %nistdir%\src  ST104A
-call :sub_cobol CBLCLG %nistdir%\src  ST105A
+call :sub_cobol CBLC   %nistdir%\src  ST107A
 call :sub_cobol CBLCLG %nistdir%\src  ST106A
-call :sub_cobol CBLCLG %nistdir%\src  ST107A
 call :sub_cobol CBLCLG %nistdir%\src  ST108A
+call :sub_cobol CBLC   %nistdir%\src  ST110A
+call :sub_cobol CBLC   %nistdir%\src  ST111A
 call :sub_cobol CBLCLG %nistdir%\src  ST109A
-call :sub_cobol CBLCLG %nistdir%\src  ST110A
-call :sub_cobol CBLCLG %nistdir%\src  ST111A
+call :sub_cobol CBLC   %nistdir%\src  ST113M
+call :sub_cobol CBLC   %nistdir%\src  ST114M
 call :sub_cobol CBLCLG %nistdir%\src  ST112M
-call :sub_cobol CBLCLG %nistdir%\src  ST113M
-call :sub_cobol CBLCLG %nistdir%\src  ST114M
+call :sub_cobol CBLC   %nistdir%\src  ST116A
+call :sub_cobol CBLC   %nistdir%\src  ST117A
 call :sub_cobol CBLCLG %nistdir%\src  ST115A
-call :sub_cobol CBLCLG %nistdir%\src  ST116A
-call :sub_cobol CBLCLG %nistdir%\src  ST117A
 call :sub_cobol CBLCLG %nistdir%\src  ST118A
+call :sub_cobol CBLC   %nistdir%\src  ST120A
+call :sub_cobol CBLC   %nistdir%\src  ST121A
 call :sub_cobol CBLCLG %nistdir%\src  ST119A
-call :sub_cobol CBLCLG %nistdir%\src  ST120A
-call :sub_cobol CBLCLG %nistdir%\src  ST121A
-call :sub_cobol CBLCLG %nistdir%\src  ST122M
-call :sub_cobol CBLCLG %nistdir%\src  ST123M
-call :sub_cobol CBLCLG %nistdir%\src  ST124M
+call :sub_cobol CBLC   %nistdir%\src  ST123A
+call :sub_cobol CBLC   %nistdir%\src  ST124A
+call :sub_cobol CBLCLG %nistdir%\src  ST122A
+call :sub_cobol CBLC   %nistdir%\src  ST126A
 call :sub_cobol CBLCLG %nistdir%\src  ST125A
-call :sub_cobol CBLCLG %nistdir%\src  ST126A
 call :sub_cobol CBLCLG %nistdir%\src  ST127A
 call :sub_cobol CBLCLG %nistdir%\src  ST131A
-call :sub_cobol CBLCLG %nistdir%\src  ST132M
-call :sub_cobol CBLCLG %nistdir%\src  ST133M
-call :sub_cobol CBLCLG %nistdir%\src  ST134M
+call :sub_cobol CBLCLG %nistdir%\src  ST132A
+call :sub_cobol CBLCLG %nistdir%\src  ST133A
+call :sub_cobol CBLCLG %nistdir%\src  ST134A
 call :sub_cobol CBLCLG %nistdir%\src  ST135A
 call :sub_cobol CBLCLG %nistdir%\src  ST136A
 call :sub_cobol CBLCLG %nistdir%\src  ST137A
@@ -719,28 +722,41 @@ call :sub_cobol CBLCLG %nistdir%\src  ST301M
 :skip_ST
 
 rem --
-rem -- sort all error messages from all compiles
-type %nistdir%\src\*.err   >%nistdir%\src\#all.err 2>nul
-type %nistdir%\z390\*.err >>%nistdir%\src\#all.err 2>nul
-sort /+17 %nistdir%\src\#all.err /O %nistdir%\src\#allsort.err
-copy %nistdir%\src\#all.err %nistdir%\z390\#full_log.txt
-echo .
-echo %copymbr% copy members found and %copyerr% not found
-echo %datambr% data members found and %dataerr% not found
-echo %tested% compiles completed:
-echo - okay RC=0 for %testgood% tests
-echo - warn RC=4 for %testwarn% tests
-echo - err  RC=8 for %testerr% tests
-echo - any other for %testfail% tests
-echo - and %nocount% not counted
-echo .
-echo See %nistdir%\src\$allsort.err for complete list of all messages
+rem -- Create result statistics to error file
+echo %0 %copymbr% copy members found and %copyerr% not found> %nistdir%\z390\RUNNIST.ERR
+echo %0 %datambr% data members found and %dataerr% not found>>%nistdir%\z390\RUNNIST.ERR
+echo %0 %tested% compiles completed:         >>%nistdir%\z390\RUNNIST.ERR
+echo %0 - okay RC=0 for %testgood% tests     >>%nistdir%\z390\RUNNIST.ERR
+echo %0 - warn RC=4 for %testwarn% tests     >>%nistdir%\z390\RUNNIST.ERR
+echo %0 - err  RC=8 for %testerr% tests      >>%nistdir%\z390\RUNNIST.ERR
+echo %0 - any other for %testfail% tests     >>%nistdir%\z390\RUNNIST.ERR
+echo %0 - and %nocount% not NIST             >>%nistdir%\z390\RUNNIST.ERR
+echo %0 z390 repository is at hash %z390_LVL%>>%nistdir%\z390\RUNNIST.ERR
+echo %0 NIST repository is at hash %NIST_LVL%>>%nistdir%\z390\RUNNIST.ERR
+echo %0 Date: %DATE% %TIME%                  >>%nistdir%\z390\RUNNIST.ERR
 
-set z_ReturnCode=0
+rem --
+rem -- Report statistics to current log and to #all.err file
+type %nistdir%\z390\RUNNIST.ERR >>%nistdir%\z390\#all.err
+echo .
+type %nistdir%\z390\RUNNIST.ERR
+echo .
+echo See %nistdir%\sz390\$allsort.err for complete list of all messages
+
+rem --
+rem -- sort complete log file, then exit
+copy %nistdir%\z390\#all.err %nistdir%\z390\#full_log.txt >NUL
+set myRC=%ERRORLEVEL%
+if %myRC% GTR %NIST_RC% set NIST_RC=%myRC%
+sort /+17 %nistdir%\z390\#all.err /O %nistdir%\z390\#allsort.err
+set myRC=%ERRORLEVEL%
+if %myRC% GTR %NIST_RC% set NIST_RC=%myRC%
+echo .
+echo final return code is %NIST_RC%
 goto return
 
 :help
-set z_ReturnCode=8
+set NIST_RC=8
 echo .
 echo %0 ERROR: no arguments provided - path to z390 repository unknown
 echo .
@@ -772,14 +788,20 @@ echo To specify z390 options, provide them in variable z390opt
 echo .
 goto return
 
-:error
-set z_ReturnCode=%ERRORLEVEL%
-echo %0 ERROR: Encountered RC %z_ReturnCode% - exiting
+:no_nistrepo
+set NIST_RC=12
+echo %0 ERROR: %nistdir% is not a git repository
+goto return
+
+:no_z390repo
+set NIST_RC=12
+echo %0 ERROR: %z390dir% is not a git repository
+goto return
 
 :return
 popd
 rem ----- Lvl(%z_NestLevel%)  End %0 %1 %2 %3 %4 %5 %6 %7 %8 %9
-exit /b %z_ReturnCode%
+exit /b %NIST_RC%
 
 
 
@@ -810,25 +832,29 @@ set dir=%2
 set pgm=%3
 if /I %4. EQU NOCOUNT. set /A nocount = %nocount% + 1
 if /I %4. NEQ NOCOUNT. set /A tested  = %tested%  + 1
-if not exist %2\%3.CBL goto :sub_nocbl
+if not exist %dir%\%pgm%.CBL goto :sub_nocbl
 rem -- set printer destination if GO step is requested
 set XXXXX047=%dir%
 set XXXXX048=%dir%
 if %1 == CBLCLG (set XXXXX055=%dir%\%pgm%_XXXXX055.OUT
          ) else (set XXXXX055=)
 call bat\%1 %z_TraceMode% %dir%\%pgm% notiming SYSCPY(+%~dps0) %z390opt%
-set rc=%errorlevel%
+set myRC=%ERRORLEVEL%
+if %myRC% GTR %NIST_RC% set NIST_RC=%myRC%
 rem -- bump applicable result counter
-if /I %4. EQU NOCOUNT. goto :EOF
-if %rc% == 0 (set /A testgood = %testgood% + 1 && goto :EOF)
-if %rc% == 4 (set /A testwarn = %testwarn% + 1 && goto :EOF)
-if %rc% == 8 (set /A testerr  = %testerr%  + 1 && goto :EOF)
+if /I %4. EQU NOCOUNT. goto :sub_cobol_end
+if %myRC% == 0 (set /A testgood = %testgood% + 1 && goto :sub_cobol_end)
+if %myRC% == 4 (set /A testwarn = %testwarn% + 1 && goto :sub_cobol_end)
+if %myRC% == 8 (set /A testerr  = %testerr%  + 1 && goto :sub_cobol_end)
 set /A testfail = %testfail% + 1
-goto :EOF
+goto :sub_cobol_end
 :sub_nocbl
+if 12 GTR %NIST_RC% set NIST_RC=12
 set /A testerr = %testerr% + 1
-echo %2\%3.CBL not found
-echo %2\%3.CBL not found >>%2\%3.ERR
+echo %dir%\%pgm%.CBL not found >>%dir%\%pgm%.ERR
+type %dir%\%pgm%.ERR
+:sub_cobol_end
+type %dir%\%pgm%.ERR >>%nistdir%\z390\#all.err 2>nul
 goto :EOF
 
 
@@ -841,11 +867,15 @@ rem -- %3 = source file name without extension
 rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
 if not exist %2\%3.CPY goto :sub_nocopy
 set /A copymbr = %copymbr% + 1
-goto :EOF
+echo %2\%3.CPY found >>%2\%3.ERR
+goto :sub_copy_end
 :sub_nocopy
+if 12 GTR %NIST_RC% set NIST_RC=12
 set /A copyerr = %copyerr% + 1
-echo %2\%3.CPY not found
 echo %2\%3.CPY not found >>%2\%3.ERR
+:sub_copy_end
+type %2\%3.ERR
+type %2\%3.ERR >>%nistdir%\z390\#all.err 2>nul
 goto :EOF
 
 
@@ -858,9 +888,13 @@ rem -- %3 = source file name without extension
 rem -- %4 = COUNT/NOCOUNT indicator. COUNT is the default.
 if not exist %2\%3.DAT goto :sub_nodata
 set /A datambr = %datambr% + 1
-goto :EOF
+echo %2\%3.DAT found >>%2\%3.ERR
+goto :sub_data_end
 :sub_nodata
+if 12 GTR %NIST_RC% set NIST_RC=12
 set /A dataerr = %dataerr% + 1
-echo %2\%3.DAT not found
 echo %2\%3.DAT not found >>%2\%3.ERR
+:sub_data_end
+type %2\%3.ERR
+type %2\%3.ERR >>%nistdir%\z390\#all.err 2>nul
 goto :EOF

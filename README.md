@@ -50,3 +50,17 @@ https://sourceforge.net/projects/gnucobol/files/nist/
 
 The best case is this code could be treated as in the public domain.
 
+## z390 use of the NIST test Suite
+
+For z390 a separate subdirectoey has been created: z390
+
+This directory contains z390-specific variations of NIST test programs,
+copies of copy members - z390 requires extension .CPZ rather than .CPY
+
+It also contains the RUNNIST.BAT script.
+Start the RUNNIST.BAT without parameters to get an explanation of its parameters.
+
+The RUNNIST.BAT procedure will compile, link, and execute all programs in the NIST suite
+and also the additional z390 variations.
+A complete log of all error messages can be found in (the full log)[z390/#full_log.txt].
+Detailed documentation can be found in (zCobol compiler status by program)[z390/_status.md]
