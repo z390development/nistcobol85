@@ -277,7 +277,7 @@ call :sub_cobol CBLCLG %nistdir%\z390 IC235A  NOCOUNT || rem instead of the orig
 call :sub_cobol CBLCLG %nistdir%\src  IC237A
 call :sub_cobol CBLC   %nistdir%\z390 IC237A1 NOCOUNT || rem instead of the original
 call :sub_cobol CBLCLG %nistdir%\z390 IC237A  NOCOUNT || rem instead of the original
-call :sub_cobol CBLCLG %nistdir%\src  IC401M 
+call :sub_cobol CBLCLG %nistdir%\src  IC401M
 :skip_IC
 
 rem --
