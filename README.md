@@ -39,7 +39,7 @@ The suite includes **14 test modules** covering all major COBOL-85 features:
 | ST     | Sort/Merge          |  40      | SORT and MERGE statements              |
 | DB     | Debug               |  15      | Debug module features                  |
 | SG     | Segmentation        |  13      | Overlay segmentation                   |
-| SM     | Source Management   |  17      | COPY and REPLACING                     |
+| SM     | Source Manipulation |  17      | COPY and REPLACING                     |
 | CM     | Communication       |   9      | Communication module                   |
 | RW     | Report Writer       |   6      | Report generation                      |
 | OB     | Obsolete            |   9      | Deprecated elements                    |

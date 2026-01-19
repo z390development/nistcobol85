@@ -564,7 +564,7 @@ call :sub_cobol CBLCLG %nistdir%\src SG401M
 :skip_SG
 
 rem --
-rem -- SM = Source Modules
+rem -- SM = Source Manipulation
 if /I %test_all%. EQU N. if /I %test_SM%. NEQ Y. goto skip_SM
 call :sub_cobol CBLC   %nistdir%\src SM102A
 call :sub_cobol CBLCLG %nistdir%\src SM101A
@@ -779,7 +779,7 @@ echo - NC = Nucleus
 echo - OB = Obsolete features
 echo - RW = Report Writer
 echo - SG = Segmentation
-echo - SM = Source Management
+echo - SM = Source Manipulation
 echo - SQ = Sequential I/O
 echo .
 echo There is no prescribed order of parameters
