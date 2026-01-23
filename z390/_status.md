@@ -466,7 +466,7 @@
 | SG303M  |            | Okay       | Okay        | Okay    | Okay      |
 | SG401M  |            | Okay       | Okay        | Okay    | Okay      |
 
-## Module SM = Source modules
+## Module SM = Source manipulation
 
 | Program | Subprogram | Conversion | Compilation | Linkage | Execution |
 |---------|------------|------------|-------------|---------|-----------|
