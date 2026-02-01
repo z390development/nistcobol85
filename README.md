@@ -14,6 +14,8 @@ a significant contribution in the nineties, adding tests for X/Open Cobol.
 This repository holds the COBOL source code for the NIST ANSI COBOL 85 test suite, release 4.2,
 yet without the X/Open extensions.
 
+For a list of pending to-do items, please see [our to-do list](todo.md)
+
 ### Test Suite Files
 
 | File             | Size    | Description                                  |
