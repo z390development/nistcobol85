@@ -8542,8 +8542,10 @@ SM202A    ZC390 START
 SM202A    ZC390 ZC390E abort zc390 exception - java.lang.IllegalArgumentException: Illegal group reference on line 476
 SM202A    ZC390 ENDED   RC=16 MEM(MB)= MB IO=***
 SM201A    ZC390 START
-SM201A    ZC390 ZC390E split pseudo COPY replacement not supported009900             REPLACING ==02 TST-FLD-1  PICTURE 9(5). 02 FILLER     on line 109
-SM201A    ZC390 ZC390E unknown COPY parm - PICTURE010000                       PICTURE X(115)==                            on line 110
+SM201A    ZC390 ZC390E split pseudo COPY replacement not supported
+009900             REPLACING ==02 TST-FLD-1  PICTURE 9(5). 02 FILLER     on line 109
+SM201A    ZC390 ZC390E unknown COPY parm - PICTURE
+010000                       PICTURE X(115)==                            on line 110
 SM201A    ZC390 ENDED   RC=12 MEM(MB)= MB IO=***
 SM204A    ZC390 START
 SM204A    ZC390 ENDED   RC= 0 MEM(MB)= MB IO=***
@@ -8579,28 +8581,49 @@ SM205A    AZ390 MNOTE 8,'FD OPTION NOT SUPPORTED - VALUE'
 SM205A    AZ390 AZ390I FID= 32 ERR=   1 C:\z390dev\wrk_rt\zcobol\mac\FD.MAC
 SM205A    MZ390 ENDED   RC= 8 MEM(MB)= MB IO=***
 SM206A    ZC390 START
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported033900             REPLACING ==PERFORM FAIL. == BY ====.                 on line 339
-SM206A    ZC390 ZC390E unknown COPY parm - SECT-SM206-0002034100 SECT-SM206-0002 SECTION.                                          on line 341
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported036200             REPLACING == WRK-DS-09V00-901                         on line 362
-SM206A    ZC390 ZC390E unknown COPY parm - SUBTRACT036300                          SUBTRACT 1 FROM                          on line 363
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported042600             REPLACING ==+00001== BY  +2                           on line 426
-SM206A    ZC390 ZC390E unknown COPY parm - ==042700                       == 1 ==    BY  -3 .                         on line 427
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported047200                 REPLACING ==THIS IS NOT REAL COBOL-74 SYNTAX HOWE on line 473
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported047500                     == DELETE==                                   on line 475
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported050700              REPLACING == 1 == BY  == 5 ==                        on line 522
-SM206A    ZC390 ZC390E unknown COPY parm - ==050800                        == 5 == BY  == 7 ==.                       on line 523
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported053600             REPLACING ==001== BY == 3 ==                          on line 551
-SM206A    ZC390 ZC390E unknown COPY parm - ==053700                       ==005== BY == 7 ==.                         on line 552
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported056700         REPLACING ==FAIL. SUBTRACT 1 FROM ERROR-COUNTER. ==       on line 582
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported061000         REPLACING ==FAIL. THIS IS GARBAGE. SUBTRACT 1 FROM        on line 629
-SM206A    ZC390 ZC390E unknown COPY parm - ERROR-COUNTER061100                     ERROR-COUNTER. ==                             on line 630
-SM206A    ZC390 ZC390E split pseudo COPY replacement not supported063800             REPLACING =="G"== BY =="T"==.                         on line 657
-SM206A    ZC390 ZC390E unknown COPY parm - PERFORM064000             PERFORM PASS                                          on line 659
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+033900             REPLACING ==PERFORM FAIL. == BY ====.                 on line 339
+SM206A    ZC390 ZC390E unknown COPY parm - SECT-SM206-0002
+034100 SECT-SM206-0002 SECTION.                                          on line 341
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+036200             REPLACING == WRK-DS-09V00-901                         on line 362
+SM206A    ZC390 ZC390E unknown COPY parm - SUBTRACT
+036300                          SUBTRACT 1 FROM                          on line 363
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+042600             REPLACING ==+00001== BY  +2                           on line 426
+SM206A    ZC390 ZC390E unknown COPY parm - ==
+042700                       == 1 ==    BY  -3 .                         on line 427
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+047200                 REPLACING ==THIS IS NOT REAL COBOL-74 SYNTAX HOWE on line 473
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+047500                     == DELETE==                                   on line 475
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+050700              REPLACING == 1 == BY  == 5 ==                        on line 522
+SM206A    ZC390 ZC390E unknown COPY parm - ==
+050800                        == 5 == BY  == 7 ==.                       on line 523
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+053600             REPLACING ==001== BY == 3 ==                          on line 551
+SM206A    ZC390 ZC390E unknown COPY parm - ==
+053700                       ==005== BY == 7 ==.                         on line 552
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+056700         REPLACING ==FAIL. SUBTRACT 1 FROM ERROR-COUNTER. ==       on line 582
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+061000         REPLACING ==FAIL. THIS IS GARBAGE. SUBTRACT 1 FROM        on line 629
+SM206A    ZC390 ZC390E unknown COPY parm - ERROR-COUNTER
+061100                     ERROR-COUNTER. ==                             on line 630
+SM206A    ZC390 ZC390E split pseudo COPY replacement not supported
+063800             REPLACING =="G"== BY =="T"==.                         on line 657
+SM206A    ZC390 ZC390E unknown COPY parm - PERFORM
+064000             PERFORM PASS                                          on line 659
 SM206A    ZC390 ENDED   RC=12 MEM(MB)= MB IO=***
 SM207A    ZC390 START
-SM207A    ZC390 ZC390E I/O error opening copy file - java.io.FileNotFoundException: C:\z390dev\wrk_nist\src\ALTLB.CPZ (The system cannot find the file specified)032100     XXXXX047.                                                     on line 321
-SM207A    ZC390 ZC390E I/O error opening copy file - java.io.FileNotFoundException: C:\z390dev\wrk_nist\src\ALTLB.CPZ (The system cannot find the file specified)034000     XXXXX048.                                                     on line 340
-SM207A    ZC390 ENDED   RC=12 MEM(MB)= MB IO=***
+SM207A    ZC390 ENDED   RC= 0 MEM(MB)= MB IO=***
+SM207A    MZ390 START
+SM207A    MZ390 ENDED   RC= 0 MEM(MB)= MB IO=***
+SM207A    LZ390 START
+SM207A    LZ390 ENDED   RC= 0 MEM(MB)= MB IO=***
+SM207A    EZ390 START
+SM207A    EZ390 ENDED   RC= 0 MEM(MB)= MB IO=*** INS=2479
 SM208A    ZC390 START
 SM208A    ZC390 ZC390E REPLACE missing BY after ==pseudo-text== on line 467
 SM208A    ZC390 ENDED   RC=12 MEM(MB)= MB IO=***
